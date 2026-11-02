@@ -1,0 +1,145 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import PageHero from '../components/PageHero.astro';
+import NextPage from '../components/NextPage.astro';
+import CompanyLogo from '../components/CompanyLogo.astro';
+import Deco from '../components/Deco.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import { projects, testimonials, projectHref, teamImage, videos } from '../data/home';
+import { method } from '../data/siteContent';
+---
+
+<Layout title="Réalisations | N7Consulting" description="Des projets concrets menés par nos équipes pour les entreprises qui nous font confiance.">
+	<SiteHeader />
+	<main id="contenu">
+		<PageHero
+			image="https://cdn.prod.website-files.com/67a9fca34d150f14e73d9ba7/67b47c8f28387bca819ef6c0_N7C_CRPSO2024_5_11zon-p-500.avif"
+			crumbs={[{ label: 'Accueil', href: '/' }, { label: 'Réalisations' }]}
+			eyebrow="Des projets concrets"
+			lead="La confiance se construit"
+			em="dans les résultats."
+		/>
+
+		<section class="projects" aria-label="Nos projets">
+			<div class="project-list" data-stagger="120">
+				{projects.map((project, index) => (
+					<a class="project-row" href={projectHref(project.client)} aria-label={`En savoir plus sur le projet ${project.client}`} data-cursor>
+						<span class="project-index">0{index + 1}</span>
+						<span class="project-client"><CompanyLogo name={project.client} size={52} />{project.client}</span>
+						<span class="project-description"><span class="cat">{project.category}</span><span class="ttl">{project.title}</span></span>
+						<span class="go" aria-hidden="true">↗</span>
+					</a>
+				))}
+			</div>
+			<p class="project-note" data-reveal="up">Quelques exemples parmi les projets menés par nos équipes et les entreprises qui nous font confiance.</p>
+		</section>
+
+		<TrustStrip />
+
+		<section class="quote-section" aria-labelledby="quotes-title">
+			<Deco kind="constellation" style="left:var(--gut);top:30px;width:260px;color:#ffe680;opacity:.4" />
+			<Deco kind="gear" style="right:-70px;bottom:-100px;width:320px;color:#fff;opacity:.07" />
+			<div class="quote-head" data-reveal="up">
+				<p class="n7-eyebrow">La parole à nos clients</p>
+				<h2 id="quotes-title" class="n7-h2 on-dark hl-title on-dark">Ils nous ont confié <em>leurs projets.</em></h2>
+			</div>
+			<div class="quote-grid" data-stagger="160">
+				{testimonials.map((t) => (
+					<blockquote>
+						<div class="qhead"><svg class="qmark" viewBox="0 0 48 36" aria-hidden="true"><path d="M0 36V20C0 8 7 1.500 19 0v7c-6 1.200-9 4.500-9 10h9v19H0Zm28 0V20C28 8 35 1.500 47 0v7c-6 1.200-9 4.500-9 10h9v19H28Z" fill="currentColor" /></svg><CompanyLogo name={t.company} size={50} /></div>
+						<p>{t.text}</p>
+						<footer><span class="avatar" aria-hidden="true">{t.initials}</span><span><strong>{t.name}</strong><small>{t.role}</small></span></footer>
+					</blockquote>
+				))}
+			</div>
+		</section>
+
+		<section class="video-section" aria-labelledby="videos-title">
+			<div class="video-head" data-reveal="up">
+				<p class="n7-eyebrow on-light">En vidéo</p>
+				<h2 id="videos-title" class="n7-h2 hl-title">Découvrez N7 Consulting <em>en mouvement.</em></h2>
+			</div>
+			<div class="video-grid" data-stagger="140">
+				{videos.map((v) => (
+					<figure class="video-card">
+						<div class="video-frame">
+							<iframe src={v.src} title={v.title} loading="lazy" allow="fullscreen; picture-in-picture; clipboard-write; encrypted-media" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+						</div>
+						<figcaption>
+							<span><small>{v.caption}</small><strong>{v.title}</strong></span>
+							<a href={v.href} target="_blank" rel="noreferrer" aria-label={`Ouvrir la vidéo « ${v.title} » sur son site`}>↗</a>
+						</figcaption>
+					</figure>
+				))}
+			</div>
+		</section>
+
+		<NextPage href="/methode" title="Notre méthode" image={method[1].image} />
+	</main>
+	<SiteFooter />
+</Layout>
+
+<style>
+	.projects { padding: clamp(60px, 7vw, 100px) var(--gut) clamp(70px, 8vw, 110px); background: #fff; }
+	.project-list { border-top: 3px solid var(--navy); }
+	.project-row { position: relative; overflow: hidden; isolation: isolate; display: grid; grid-template-columns: 64px minmax(0, 1.1fr) minmax(0, 2fr) 52px; align-items: center; gap: 28px; min-height: 170px; padding: 0 24px; border-bottom: 1px solid var(--line); color: var(--navy); text-decoration: none; transition: color .4s ease, padding .5s var(--ease); }
+	.project-row::before { content: ''; position: absolute; z-index: -1; inset: 0; background: var(--cobalt); transform: translateX(-101%); transition: transform .6s var(--ease); }
+	.project-row:hover { color: #fff; padding-left: 34px; }
+	.project-row:hover::before { transform: none; }
+	.project-index { color: var(--cobalt); font-family: var(--display); font-size: 18px; font-weight: 700; transition: color .3s; }
+	.project-row:hover .project-index, .project-row:hover .cat { color: var(--gold); }
+	.project-client { display: flex; align-items: center; gap: 16px; font-family: var(--display); font-size: clamp(22px, 2.7vw, 39px); font-weight: 800; letter-spacing: -.035em; line-height: 1; }
+	.project-description { display: flex; flex-direction: column; gap: 6px; }
+	.cat { color: var(--cobalt); font-size: 13.5px; font-weight: 700; transition: color .3s; }
+	.ttl { color: #2a2f55; font-size: 16px; line-height: 1.5; transition: color .3s; }
+	.project-row:hover .ttl { color: #fff; }
+	.go { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--gold); color: var(--navy); font-size: 19px; transition: transform .5s var(--ease); }
+	.project-row:hover .go { transform: rotate(45deg) scale(1.1); }
+	.project-note { margin: 24px 0 0; color: var(--mut); font-size: 13.5px; }
+
+	.quote-section { position: relative; overflow: hidden; padding: clamp(80px, 9vw, 130px) var(--gut) clamp(110px, 11vw, 150px); background: linear-gradient(150deg, var(--navy-d), #1b1f8f 70%, #3b2fd0); color: #fff; }
+	.quote-section::before { content: '“'; position: absolute; right: 4%; top: -.18em; font-family: var(--display); font-size: clamp(222px, 31.1vw, 473.5px); font-weight: 800; line-height: 1; color: rgba(255,212,59,.12); pointer-events: none; }
+	.quote-head { position: relative; margin-bottom: clamp(40px, 5vw, 64px); }
+	.quote-grid { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+	.quote-section blockquote { position: relative; display: flex; flex-direction: column; margin: 0; padding: 44px 42px 38px; background: #fff; color: var(--navy); border-radius: var(--r-l); transition: transform .6s var(--ease), box-shadow .5s var(--ease); }
+	.quote-section blockquote:nth-child(2) { background: var(--gold); transform: translateY(14px); }
+	.quote-section blockquote:hover { transform: translateY(-3px); box-shadow: 0 40px 70px -26px rgba(6,10,34,.7); }
+	.quote-section blockquote:nth-child(2):hover { transform: translateY(11px); }
+	.qhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+	.qmark { width: 46px; color: var(--cobalt); }
+	.quote-section blockquote:nth-child(2) .qmark { color: var(--navy); }
+	.quote-section blockquote p { margin: 0 0 34px; font-family: var(--display); font-size: clamp(16px, 1.4vw, 19.5px); font-weight: 600; line-height: 1.5; letter-spacing: -.015em; }
+	.quote-section blockquote footer { display: flex; align-items: center; gap: 16px; margin-top: auto; }
+	.avatar { display: grid; place-items: center; width: 54px; height: 54px; flex-shrink: 0; border-radius: 50%; background: var(--cobalt); color: #fff; font-family: var(--display); font-size: 15.5px; font-weight: 800; }
+	.quote-section blockquote:nth-child(2) .avatar { background: var(--navy); color: var(--gold); }
+	.quote-section blockquote footer strong { display: block; font-size: 15.5px; }
+	.quote-section blockquote footer small { color: var(--mut); font-size: 14px; }
+	.quote-section blockquote:nth-child(2) footer small { color: #3b3f66; }
+
+	.video-section { padding: clamp(70px, 8vw, 120px) var(--gut); background: var(--paper); }
+	.video-head { margin-bottom: clamp(32px, 4vw, 52px); }
+	.video-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+	.video-card { margin: 0; overflow: hidden; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); box-shadow: 0 14px 34px -26px rgba(11,16,51,.35); }
+	.video-frame { position: relative; aspect-ratio: 16 / 9; background: var(--navy); }
+	.video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+	.video-card figcaption { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; color: var(--navy); }
+	.video-card figcaption small { display: block; margin-bottom: 3px; color: var(--mut); font-size: 13px; font-weight: 600; }
+	.video-card figcaption strong { font-family: var(--display); font-size: 16.5px; font-weight: 800; line-height: 1.25; letter-spacing: -.02em; }
+	.video-card figcaption a { display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--gold); color: var(--navy); font-size: 16px; text-decoration: none; transition: transform .4s var(--ease), background .3s, color .3s; }
+	.video-card figcaption a:hover { transform: rotate(45deg); background: var(--navy); color: var(--gold); }
+
+	@media (max-width: 1000px) {
+		.quote-grid, .video-grid { grid-template-columns: 1fr; }
+		.quote-section blockquote:nth-child(2) { transform: none; }
+		.project-row { grid-template-columns: 44px minmax(0, 1fr) minmax(0, 1.6fr) 52px; gap: 16px; }
+	}
+	@media (max-width: 650px) {
+		.project-row { grid-template-columns: 34px minmax(0, 1fr) 52px; gap: 6px 14px; padding: 26px 0; min-height: 0; }
+		.project-row:hover { padding-left: 0; }
+		.project-description { grid-column: 2; grid-row: 2; }
+		.project-row .go { grid-column: 3; grid-row: 1 / 3; }
+		.quote-section blockquote { padding: 32px 26px 28px; }
+	}
+</style>

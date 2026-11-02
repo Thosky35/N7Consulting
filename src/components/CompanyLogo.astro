@@ -1,0 +1,27 @@
+---
+import { logoDomains, initials } from '../lib/logos';
+
+interface Props {
+	name: string;
+	size?: number;
+	/** strict : n’affiche rien si le logo est inconnu (au lieu des initiales) */
+	strict?: boolean;
+}
+const { name, size = 40, strict = false } = Astro.props;
+const key = Object.keys(logoDomains).find((k) => k.toLowerCase() === name.trim().toLowerCase());
+const domain = key ? logoDomains[key] : undefined;
+const src = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : undefined;
+---
+
+{(src || !strict) && (
+	<span class="company-logo" style={`--s:${size}px`} title={name}>
+		<span class="ini" aria-hidden="true">{initials(name)}</span>
+		{src && <img src={src} alt="" width={size} height={size} loading="lazy" onerror="this.remove()" />}
+	</span>
+)}
+
+<style>
+	.company-logo { position: relative; display: inline-grid; place-items: center; flex-shrink: 0; width: var(--s); height: var(--s); overflow: hidden; vertical-align: middle; border-radius: calc(var(--s) * .28); background: #fff; border: 1px solid rgba(11,16,51,.12); box-shadow: 0 6px 14px -8px rgba(6,10,34,.45); }
+	.ini { color: var(--navy); font-family: var(--display); font-size: calc(var(--s) * .36); font-weight: 800; letter-spacing: -.04em; }
+	img { position: absolute; inset: 0; width: 100%; height: 100%; padding: calc(var(--s) * .14); object-fit: contain; background: #fff; }
+</style>

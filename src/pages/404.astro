@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+---
+
+<Layout title="Page introuvable | N7Consulting" description="Cette page n’existe pas ou a été déplacée.">
+	<SiteHeader />
+	<main class="nf">
+		<span class="orb" aria-hidden="true"></span>
+		<p class="code rise" style="--i:0">404</p>
+		<h1 class="hl-title on-dark loaded rise" style="--i:1">Cette page <em>n’existe pas.</em></h1>
+		<p class="txt rise" style="--i:2">Le lien est peut-être erroné ou la page a été déplacée. Revenez à l’accueil ou contactez-nous.</p>
+		<div class="actions rise" style="--i:3">
+			<a class="n7-btn n7-btn-gold" href="/">Retour à l’accueil <span aria-hidden="true">↗</span></a>
+			<a class="n7-link n7-link-light" href="/contact">Nous contacter <span aria-hidden="true">→</span></a>
+		</div>
+	</main>
+	<SiteFooter cta={false} />
+</Layout>
+
+<style>
+	.nf { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: 72vh; padding: 90px var(--gut); background: linear-gradient(130deg, var(--navy-d) 0%, #1b2590 62%, #3b4bff 130%); color: #fff; }
+	.orb { position: absolute; width: 640px; height: 640px; right: -180px; top: -200px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, rgba(59,75,255,.55), rgba(59,75,255,0) 66%); animation: drift 14s ease-in-out infinite alternate; pointer-events: none; }
+	@keyframes drift { to { transform: translate3d(-40px, 30px, 0) scale(1.08); } }
+	.rise { position: relative; animation: rise .95s var(--ease) both; animation-delay: calc(var(--i, 0) * 120ms + 100ms); }
+	@keyframes rise { from { opacity: 0; transform: translate3d(0, 30px, 0); } to { opacity: 1; transform: none; } }
+	.code { margin: 0; color: var(--gold); font-family: var(--display); font-size: clamp(81.5px, 14.8vw, 192.5px); font-weight: 800; line-height: .9; letter-spacing: -.06em; }
+	h1 { margin: 10px 0 0; font-size: clamp(25px, 4vw, 49px); font-weight: 700; line-height: 1.05; letter-spacing: -.03em; }
+	.txt { max-width: 540px; margin: 22px 0 34px; color: #d3d7f5; font-size: 17px; line-height: 1.7; }
+	.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 28px 32px; }
+</style>

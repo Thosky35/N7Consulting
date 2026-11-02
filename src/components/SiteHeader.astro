@@ -1,0 +1,193 @@
+---
+import BrandLogo from './BrandLogo.astro';
+import { poles, site } from '../data/siteContent';
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const is = (href: string) => (path === href ? 'page' : undefined);
+const aboutPages = [
+	{ href: '/equipe', label: 'Notre équipe' },
+	{ href: '/valeurs', label: 'Nos valeurs' },
+	{ href: '/environnement', label: 'Notre environnement' },
+	{ href: '/histoire', label: 'Notre histoire' },
+];
+const inPoles = poles.some((p) => path === `/${p.slug}`);
+const inAbout = path === '/qui-sommes-nous' || aboutPages.some((a) => a.href === path);
+
+const items = [
+	{ label: 'Accueil', href: '/', active: path === '/' },
+	{ label: 'Nos prestations', active: inPoles, subs: poles.map((p) => ({ href: `/${p.slug}`, label: p.title })) },
+	{ label: 'Réalisations', href: '/realisations', active: path === '/realisations' },
+	{ label: 'Notre méthode', href: '/methode', active: path === '/methode' },
+	{ label: 'Qui sommes-nous ?', href: '/qui-sommes-nous', active: inAbout, subs: aboutPages },
+	{ label: 'Actualités', href: '/actualites', active: path.startsWith('/actualites') },
+	{ label: 'Contact', href: '/contact', active: path === '/contact' },
+];
+---
+
+<div class="topbar">
+	<div class="topbar-inner">
+		<span>Junior-Entreprise de Toulouse INP-ENSEEIHT · Depuis 1977</span>
+		<span class="topbar-links">
+			<a href={`mailto:${site.email}`}>{site.email}</a>
+			<a href={site.brochure} target="_blank" rel="noreferrer">Recevoir la brochure <span aria-hidden="true">↓</span></a>
+		</span>
+	</div>
+</div>
+
+<header class="site-header" id="site-header">
+	<div class="header-inner">
+		<a class="brand" href="/" aria-label="N7Consulting, retour à l’accueil">
+			<BrandLogo height={46} />
+			<span class="brand-text"><strong>Consulting</strong><small>Junior-Entreprise · ENSEEIHT</small></span>
+		</a>
+
+		<div class="header-actions">
+			<a class="n7-btn n7-btn-gold hd-cta" href="/contact">Nous contacter <span aria-hidden="true">↗</span></a>
+			<button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu-overlay">
+				<span class="menu-label" data-open="Menu" data-close="Fermer">Menu</span>
+				<span class="menu-icon" aria-hidden="true"><i></i><i></i></span>
+			</button>
+		</div>
+	</div>
+</header>
+
+<div class="menu-overlay" id="menu-overlay" role="dialog" aria-modal="true" aria-label="Navigation principale" hidden>
+	<span class="m-blob" aria-hidden="true"></span>
+	<div class="menu-grid">
+		<nav class="menu-primary" aria-label="Navigation principale">
+			<ol>
+				{items.map((item, i) => (
+					<li class:list={{ active: item.active }} style={`--i:${i}`}>
+						<span class="m-num">0{i + 1}</span>
+						<div class="m-main">
+							<span class="m-mask">
+								{item.href ? (
+									<a class="m-link" href={item.href} aria-current={is(item.href)}>{item.label}</a>
+								) : (
+									<span class="m-link m-static">{item.label}</span>
+								)}
+							</span>
+							{item.subs && (
+								<ul class="m-subs">
+									{item.subs.map((sub) => (
+										<li><a href={sub.href} aria-current={is(sub.href)}>{sub.label}</a></li>
+									))}
+								</ul>
+							)}
+						</div>
+					</li>
+				))}
+			</ol>
+		</nav>
+		<aside class="menu-side">
+			<a class="n7-btn n7-btn-gold" href="/contact">Confiez-nous votre projet <span aria-hidden="true">↗</span></a>
+			<div class="m-info">
+				<a href={`mailto:${site.email}`}>{site.email}</a>
+				<a href={site.mapUrl} target="_blank" rel="noreferrer">{site.address}</a>
+				<a href={site.brochure} target="_blank" rel="noreferrer">Recevoir la brochure <span aria-hidden="true">↓</span></a>
+			</div>
+		</aside>
+	</div>
+</div>
+
+<script is:inline>
+	(function () {
+		var html = document.documentElement;
+		var btn = document.querySelector('.menu-btn');
+		var overlay = document.getElementById('menu-overlay');
+		if (!btn || !overlay) return;
+		var label = btn.querySelector('.menu-label');
+		var set = function (open) {
+			if (open) {
+				overlay.hidden = false;
+				// laisse le navigateur peindre l'état fermé avant de lancer l'animation
+				requestAnimationFrame(function () { requestAnimationFrame(function () { html.classList.add('menu-open'); }); });
+			} else {
+				html.classList.remove('menu-open');
+				setTimeout(function () { if (!html.classList.contains('menu-open')) overlay.hidden = true; }, 700);
+			}
+			btn.setAttribute('aria-expanded', String(open));
+			label.textContent = open ? label.getAttribute('data-close') : label.getAttribute('data-open');
+		};
+		btn.addEventListener('click', function () { set(!html.classList.contains('menu-open')); });
+		document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && html.classList.contains('menu-open')) set(false); });
+	})();
+</script>
+
+<style>
+	.topbar { background: var(--navy-d); color: #a3aad6; font-size: 12.5px; }
+	.topbar-inner { display: flex; justify-content: space-between; gap: 20px; padding: 9px var(--gut); }
+	.topbar-links { display: flex; gap: 28px; }
+	.topbar a { color: #e3e6fb; text-decoration: none; transition: color .2s; }
+	.topbar a:hover { color: var(--gold); }
+	.topbar a span { color: var(--gold); }
+
+	.site-header { position: sticky; top: 0; z-index: 100; background: rgba(11,16,51,.88); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4); border-bottom: 1px solid rgba(255,230,128,.14); transition: background .3s ease, box-shadow .3s ease, border-color .3s; }
+	.site-header.scrolled { background: rgba(6,10,34,.94); box-shadow: 0 14px 40px -14px rgba(0,0,0,.55); }
+	:global(html.menu-open) .site-header { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; border-color: transparent; }
+	.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 72px; padding: 0 var(--gut); transition: min-height .35s var(--ease); }
+
+	.brand { display: flex; align-items: center; gap: 14px; color: #fff; text-decoration: none; }
+	.brand:hover :global(.brand-logo) { transform: scale(1.06); }
+	.brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+	.brand-text strong { font-family: var(--display); font-size: 19px; font-weight: 700; letter-spacing: -.015em; }
+	.brand-text small { margin-top: 3px; color: var(--gold-l); font-size: 12px; font-weight: 500; letter-spacing: .02em; opacity: .85; }
+
+	.header-actions { display: flex; align-items: center; gap: 14px; }
+	.hd-cta { min-height: 48px; padding: 0 7px 0 22px; gap: 14px; font-size: 14px; }
+	.hd-cta > span { width: 34px; height: 34px; }
+	.menu-btn { display: inline-flex; align-items: center; gap: 14px; min-height: 48px; padding: 0 8px 0 22px; background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.3); border-radius: 999px; color: #fff; font: 600 13.5px/1 var(--sans); cursor: pointer; transition: background .3s, border-color .3s, color .3s; }
+	.menu-btn:hover { background: #fff; border-color: #fff; color: var(--navy); }
+	.menu-icon { position: relative; display: block; width: 34px; height: 34px; border-radius: 50%; background: var(--gold); }
+	.menu-icon i { position: absolute; left: 9px; right: 9px; height: 2px; border-radius: 2px; background: var(--navy); transition: transform .45s var(--ease), top .45s var(--ease); }
+	.menu-icon i:nth-child(1) { top: 13px; }
+	.menu-icon i:nth-child(2) { top: 19px; }
+	:global(html.menu-open) .menu-icon i:nth-child(1) { top: 16px; transform: rotate(45deg); }
+	:global(html.menu-open) .menu-icon i:nth-child(2) { top: 16px; transform: rotate(-45deg); }
+
+	/* ---------- Menu plein écran ---------- */
+	.menu-overlay { position: fixed; inset: 0; z-index: 99; overflow-y: auto; background: linear-gradient(135deg, #1c2bdc, #3b4bff 50%, #5b2ee6); color: #fff; clip-path: circle(0px at calc(100% - 90px) 50px); transition: clip-path .8s var(--ease); }
+	.menu-overlay[hidden] { display: none; }
+	:global(html.menu-open) .menu-overlay { clip-path: circle(150vmax at calc(100% - 90px) 50px); }
+	:global(html.menu-open) { overflow: hidden; }
+	.m-blob { position: absolute; width: 700px; height: 700px; right: -200px; bottom: -300px; border-radius: 50%; background: radial-gradient(circle, rgba(255,212,59,.4), rgba(255,212,59,0) 65%); pointer-events: none; }
+	.menu-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); gap: 60px; min-height: 100%; padding: 140px var(--gut) 60px; }
+	.menu-primary ol { margin: 0; padding: 0; list-style: none; }
+	.menu-primary > ol > li { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: start; padding: 6px 0; border-top: 1px solid rgba(255,255,255,.22); }
+	.menu-primary > ol > li:last-child { border-bottom: 1px solid rgba(255,255,255,.22); }
+	.m-num { padding-top: .9em; color: var(--gold); font-family: var(--display); font-size: 13.5px; font-weight: 700; }
+	.m-main { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 28px; }
+	.m-mask { display: block; overflow: hidden; padding: .08em 28px .2em .08em; margin: -.04em -28px -.08em -.08em; }
+	.m-link { display: inline-block; color: #fff; font-family: var(--display); font-size: clamp(23.5px, 3.3vw, 43.5px); font-weight: 800; line-height: 1.1; letter-spacing: -.035em; text-decoration: none; transform: translate3d(0, 115%, 0); transition: transform .9s var(--ease), color .25s; transition-delay: calc(var(--i, 0) * 60ms + 80ms); }
+	:global(html.menu-open) .m-link { transform: none; }
+	a.m-link:hover { color: var(--gold); transform: translateX(12px) !important; transition-delay: 0s; }
+	.menu-primary li.active > .m-num::after { content: ' ●'; }
+	.menu-primary li.active .m-link { color: var(--gold); }
+	.m-subs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+	.m-subs a { display: inline-block; padding: 9px 16px; border: 1.5px solid rgba(255,255,255,.5); border-radius: 999px; color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; transition: background .25s, color .25s, border-color .25s, transform .4s var(--ease); }
+	.m-subs a:hover, .m-subs a[aria-current='page'] { background: var(--gold); border-color: var(--gold); color: var(--navy); transform: translateY(-2px); }
+	.menu-side { align-self: end; display: grid; gap: 34px; justify-items: start; opacity: 0; transform: translateY(20px); transition: opacity .6s ease .5s, transform .8s var(--ease) .5s; }
+	:global(html.menu-open) .menu-side { opacity: 1; transform: none; }
+	.m-info { display: grid; gap: 10px; font-size: 14px; }
+	.m-info a { color: #e8eaff; text-decoration: none; transition: color .2s; }
+	.m-info a:hover { color: var(--gold); }
+	.m-info a span { color: var(--gold); }
+
+	@media (max-width: 960px) {
+		.topbar { display: none; }
+		.header-inner, .scrolled .header-inner { min-height: 70px; }
+		.hd-cta { display: none; }
+		.menu-overlay { clip-path: circle(0px at calc(100% - 60px) 36px); }
+		:global(html.menu-open) .menu-overlay { clip-path: circle(150vmax at calc(100% - 60px) 36px); }
+		.menu-grid { grid-template-columns: 1fr; gap: 40px; padding-top: 110px; }
+		.menu-primary > ol > li { grid-template-columns: 38px minmax(0, 1fr); }
+		.menu-side { align-self: start; }
+	}
+	@media (max-width: 520px) {
+		.brand-text small { display: none; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.m-link { transform: none; }
+		.menu-side { opacity: 1; transform: none; }
+	}
+</style>

@@ -1,0 +1,24 @@
+---
+import SiteHeader from './SiteHeader.astro';
+import SiteFooter from './SiteFooter.astro';
+import ServicePage from './ServicePage.astro';
+import AboutPage from './AboutPage.astro';
+import ContactPage from './ContactPage.astro';
+import LegalPage from './LegalPage.astro';
+import type { Page } from '../data/siteContent';
+
+interface Props {
+	page: Page;
+	slug: string;
+}
+const { page, slug } = Astro.props;
+---
+
+<SiteHeader />
+<main id="contenu">
+	{page.kind === 'service' && <ServicePage page={page} slug={slug} />}
+	{page.kind === 'about' && <AboutPage page={page} />}
+	{page.kind === 'contact' && <ContactPage page={page} />}
+	{page.kind === 'legal' && <LegalPage page={page} />}
+</main>
+<SiteFooter />

@@ -1,0 +1,47 @@
+---
+/* Petit rectangle blanc stylé : lien vers une autre page (photo, titre, flèche). */
+interface Props {
+	href: string;
+	title: string;
+	kicker?: string;
+	text?: string;
+	tags?: string;
+	image?: string;
+	num?: string;
+	label?: string;
+}
+const { href, title, kicker, text, tags, image, num, label } = Astro.props;
+---
+
+<a class:list={['link-card', { 'no-img': !image }]} href={href} data-cursor aria-label={label}>
+	{image && <span class="lc-photo"><img src={image} alt="" loading="lazy" /></span>}
+	<span class="lc-text">
+		{(num || kicker) && <span class="lc-kicker">{num && <b>{num}</b>}{kicker}</span>}
+		<span class="lc-title">{title}</span>
+		{text && <span class="lc-desc">{text}</span>}
+		{tags && <span class="lc-tags">{tags}</span>}
+	</span>
+	<span class="lc-go" aria-hidden="true">↗</span>
+</a>
+
+<style>
+	.link-card { display: grid; grid-template-columns: clamp(110px, 16vw, 190px) minmax(0, 1fr) auto; align-items: center; gap: clamp(16px, 2.4vw, 30px); padding: 14px 28px 14px 14px; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); box-shadow: 0 14px 34px -26px rgba(11,16,51,.35); color: var(--navy); text-decoration: none; transition: transform .5s var(--ease), box-shadow .5s var(--ease), border-color .3s; }
+	.link-card.no-img { grid-template-columns: minmax(0, 1fr) auto; padding: 22px 28px; }
+	.link-card:hover, .link-card:focus-visible { transform: translateY(-3px); border-color: var(--gold); box-shadow: 0 26px 50px -26px rgba(11,16,51,.45); }
+	.lc-photo { display: block; overflow: hidden; aspect-ratio: 4 / 3; border-radius: calc(var(--r-m) - 6px); background: var(--navy); }
+	.lc-photo img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .9s var(--ease); }
+	.link-card:hover .lc-photo img { transform: scale(1.07); }
+	.lc-text { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+	.lc-kicker { color: var(--mut); font-size: 13.5px; font-weight: 600; }
+	.lc-kicker b { margin-right: 10px; color: var(--gold-d); font-family: var(--display); font-weight: 800; letter-spacing: .06em; }
+	.lc-title { font-family: var(--display); font-size: clamp(18px, 1.9vw, 25px); font-weight: 800; line-height: 1.1; letter-spacing: -.03em; }
+	.lc-desc { color: var(--mut); font-size: 14.5px; line-height: 1.6; }
+	.lc-tags { margin-top: 4px; color: var(--gold-d); font-size: 12.5px; font-weight: 700; }
+	.lc-go { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--gold); color: var(--navy); font-size: 18px; transition: transform .5s var(--ease), background .3s, color .3s; }
+	.link-card:hover .lc-go { transform: rotate(45deg) scale(1.08); background: var(--navy); color: var(--gold); }
+	@media (max-width: 600px) {
+		.link-card { grid-template-columns: 92px minmax(0, 1fr) auto; padding: 10px 16px 10px 10px; gap: 14px; }
+		.lc-desc { display: none; }
+		.lc-go { width: 38px; height: 38px; }
+	}
+</style>

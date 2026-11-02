@@ -1,0 +1,81 @@
+---
+import PageHero from './PageHero.astro';
+import type { LegalPage as LegalPageData } from '../data/siteContent';
+
+interface Props {
+	page: LegalPageData;
+}
+const { page } = Astro.props;
+const slugify = (s: string) =>
+	s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+---
+
+<PageHero
+	crumbs={[{ label: 'Accueil', href: '/' }, { label: page.title }]}
+	eyebrow={page.eyebrow}
+	lead={page.headingLead}
+	em={page.headingEm}
+	text={page.lead}
+/>
+
+<div class="legal">
+	<aside class="toc" aria-label="Sommaire" data-reveal="left">
+		<p>Sommaire</p>
+		<ol>
+			{page.sections.map((s) => <li><a href={`#${slugify(s.title)}`}>{s.title}</a></li>)}
+		</ol>
+	</aside>
+
+	<div class="content">
+		{page.sections.map((s) => (
+			<section id={slugify(s.title)}>
+				<h2>{s.title}</h2>
+				{s.rows && (
+					<dl class="rows">
+						{s.rows.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+					</dl>
+				)}
+				{s.paragraphs?.map((p) => <p>{p}</p>)}
+				{s.subs?.map((sub) => (
+					<div class="sub">
+						<h3>{sub.title}</h3>
+						{sub.text && <p>{sub.text}</p>}
+						{sub.list && <ul>{sub.list.map((i) => <li>{i}</li>)}</ul>}
+					</div>
+				))}
+			</section>
+		))}
+	</div>
+</div>
+
+<style>
+	.legal { display: grid; grid-template-columns: 280px 1fr; gap: clamp(40px, 6vw, 80px); padding: clamp(56px, 7vw, 96px) var(--gut) clamp(80px, 9vw, 120px); background: #fff; }
+	.toc { position: sticky; top: 110px; align-self: start; padding: 26px 26px 28px; background: var(--paper); border-radius: var(--r-m); }
+	.toc p { margin: 0 0 16px; color: var(--navy); font-family: var(--display); font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+	.toc ol { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+	.toc a { display: block; padding: 8px 12px; border-radius: 10px; color: var(--navy); font-size: 13.5px; text-decoration: none; transition: background .2s, transform .35s var(--ease); }
+	.toc a:hover { background: var(--gold-l); transform: translateX(4px); }
+	.content { max-width: 800px; }
+	section { padding-bottom: 48px; margin-bottom: 48px; border-bottom: 1px solid var(--line); scroll-margin-top: 100px; }
+	section:last-child { border-bottom: 0; }
+	h2 { margin: 0 0 24px; color: var(--navy); font-size: clamp(22.5px, 2.5vw, 30px); font-weight: 700; line-height: 1.15; letter-spacing: -.025em; }
+	h2::before { content: ''; display: block; width: 48px; height: 5px; margin-bottom: 16px; border-radius: 5px; background: var(--gold); }
+	h3 { margin: 28px 0 10px; color: var(--navy); font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
+	p { margin: 0 0 14px; color: #2a2f55; font-size: 15.5px; line-height: 1.85; }
+	ul { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+	li { position: relative; padding-left: 26px; color: #2a2f55; font-size: 15.5px; line-height: 1.7; }
+	ul li::before { content: ''; position: absolute; left: 0; top: .66em; width: 10px; height: 10px; border-radius: 50%; background: var(--gold); }
+	.toc li { padding-left: 0; }
+	.toc li::before { display: none; }
+	.rows { margin: 0; border: 1px solid var(--line); border-radius: var(--r-m); overflow: hidden; }
+	.rows div { display: grid; grid-template-columns: 220px 1fr; gap: 20px; padding: 16px 22px; }
+	.rows div + div { border-top: 1px solid var(--line); }
+	.rows div:nth-child(odd) { background: var(--paper); }
+	dt { color: var(--mut); font-size: 14px; font-weight: 600; }
+	dd { margin: 0; color: var(--navy); font-weight: 500; }
+	@media (max-width: 900px) {
+		.legal { grid-template-columns: 1fr; gap: 36px; }
+		.toc { position: static; }
+		.rows div { grid-template-columns: 1fr; gap: 2px; }
+	}
+</style>

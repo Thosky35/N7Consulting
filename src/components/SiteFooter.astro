@@ -1,0 +1,114 @@
+---
+import BrandLogo from './BrandLogo.astro';
+import CtaBand from './CtaBand.astro';
+import { poles, site } from '../data/siteContent';
+
+interface Props {
+	cta?: boolean;
+}
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+// Bandeau d'appel à l'action partout, sauf sur l'accueil et le contact (qui ont déjà le leur)
+const showCta = Astro.props.cta ?? !['/', '/contact'].includes(path);
+const year = new Date().getFullYear();
+---
+
+{showCta && <CtaBand />}
+
+<footer class="site-footer">
+	<div class="footer-grid">
+		<div class="footer-brand">
+			<a class="brand" href="/" aria-label="N7Consulting, retour à l’accueil">
+				<BrandLogo height={46} />
+				<span class="brand-text"><strong>Consulting</strong><small>Junior-Entreprise · ENSEEIHT</small></span>
+			</a>
+			<p>Le regard neuf d’étudiants ingénieurs, la rigueur d’une équipe engagée. Junior-Entreprise de Toulouse INP-ENSEEIHT depuis 1977.</p>
+			<address>
+				<a href={site.mapUrl} target="_blank" rel="noreferrer">{site.address}</a>
+				<a href={`mailto:${site.email}`}>{site.email}</a>
+			</address>
+			<div class="socials">
+				<a href={site.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn de N7 Consulting">
+					<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4v11.5H3V9.75Zm6.5 0h3.83v1.57h.06c.53-1 1.84-2.07 3.79-2.07 4.05 0 4.8 2.67 4.8 6.13v5.87h-4v-5.2c0-1.24-.02-2.84-1.73-2.84-1.73 0-2 1.35-2 2.75v5.29h-4V9.75Z" /></svg>
+				</a>
+				<a href={site.instagram} target="_blank" rel="noreferrer" aria-label="Instagram de N7 Consulting">
+					<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.500" cy="6.500" r="1" fill="currentColor" stroke="none" /></svg>
+				</a>
+			</div>
+		</div>
+
+		<nav class="footer-col" aria-label="Nos prestations">
+			<h2>Nos prestations</h2>
+			<ul>
+				{poles.map((p) => <li><a href={`/${p.slug}`}>{p.title}</a></li>)}
+			</ul>
+		</nav>
+
+		<nav class="footer-col" aria-label="N7Consulting">
+			<h2>N7Consulting</h2>
+			<ul>
+				<li><a href="/qui-sommes-nous">Qui sommes-nous ?</a></li>
+				<li><a href="/equipe">Notre équipe</a></li>
+				<li><a href="/realisations">Réalisations</a></li>
+				<li><a href="/methode">Notre méthode</a></li>
+				<li><a href="/actualites">Actualités</a></li>
+				<li><a href="/contact">Nous contacter</a></li>
+				<li><a href="/mentions-legales">Mentions légales</a></li>
+			</ul>
+		</nav>
+
+		<div class="footer-col partners">
+			<h2>Nos partenaires</h2>
+			<ul class="partner-grid">
+				{site.partners.map((p) => (
+					<li><a href={p.href} target="_blank" rel="noreferrer" aria-label={p.name}><img src={p.logo} alt={p.name} loading="lazy" /></a></li>
+				))}
+			</ul>
+			<a class="brochure" href={site.brochure} target="_blank" rel="noreferrer">Recevoir la brochure <span aria-hidden="true">↓</span></a>
+		</div>
+	</div>
+
+	<div class="wordmark" aria-hidden="true" data-reveal="up">N7 Consulting</div>
+
+	<div class="footer-bottom">
+		<span>© {year} N7 Consulting. Tous droits réservés.</span>
+		<a href="/mentions-legales">Mentions légales</a>
+	</div>
+</footer>
+
+<style>
+	.site-footer { position: relative; overflow: hidden; background: var(--navy-d); color: #aeb4dc; }
+	.site-footer::before { content: ''; position: absolute; width: 720px; height: 720px; left: -260px; top: -380px; border-radius: 50%; background: radial-gradient(circle, rgba(59,75,255,.28), transparent 65%); pointer-events: none; }
+	.footer-grid { position: relative; display: grid; grid-template-columns: 1.5fr .8fr .9fr 1.4fr; gap: 56px; padding: 88px var(--gut) 56px; }
+	.brand { display: inline-flex; align-items: center; gap: 14px; color: #fff; text-decoration: none; }
+	.brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+	.brand-text strong { font-family: var(--display); font-size: 19px; letter-spacing: -.015em; }
+	.brand-text small { margin-top: 3px; color: var(--gold-l); font-size: 12px; font-weight: 500; opacity: .85; }
+	.footer-brand > p { max-width: 360px; margin: 24px 0; font-size: 14px; line-height: 1.8; }
+	address { display: flex; flex-direction: column; gap: 6px; font-style: normal; font-size: 14px; }
+	address a, .footer-col a { color: #e3e6fb; text-decoration: none; transition: color .2s; }
+	address a:hover, .footer-col a:hover, .footer-bottom a:hover { color: var(--gold); }
+	.socials { display: flex; gap: 12px; margin-top: 26px; }
+	.socials a { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,230,128,.35); color: var(--gold-l); transition: background .3s, color .3s, transform .4s var(--ease); }
+	.socials a:hover { background: var(--gold); color: var(--navy); transform: translateY(-4px) rotate(-6deg); }
+	.footer-col h2 { margin: 0 0 24px; color: #fff; font-family: var(--display); font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+	.footer-col ul { margin: 0; padding: 0; list-style: none; }
+	.footer-col li + li { margin-top: 12px; }
+	.footer-col li a { position: relative; display: inline-block; font-size: 14px; transition: transform .3s var(--ease), color .2s; }
+	.footer-col li a:hover { transform: translateX(6px); }
+	.partner-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+	.partner-grid li + li { margin-top: 0; }
+	.partner-grid a { display: grid; place-items: center; height: 60px; padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,.1); transition: border-color .25s, background .25s, transform .35s var(--ease); }
+	.partner-grid a:hover { border-color: var(--gold); background: rgba(255,255,255,.05); transform: translateY(-3px); }
+	.partner-grid img { max-width: 100%; max-height: 100%; object-fit: contain; opacity: .85; }
+	.brochure { display: inline-flex; gap: 14px; margin-top: 26px; padding-bottom: 5px; border-bottom: 2px solid var(--gold); color: #fff !important; font-size: 14px; font-weight: 600; }
+	.brochure span { color: var(--gold); }
+	.wordmark { position: relative; padding: 0 var(--gut); font-family: var(--display); font-size: clamp(35.5px, 8.5vw, 126px); font-weight: 800; line-height: .82; letter-spacing: -.045em; white-space: nowrap; color: transparent; -webkit-text-stroke: 1.5px rgba(255,230,128,.34); user-select: none; }
+	.footer-bottom { position: relative; display: flex; justify-content: space-between; gap: 20px; margin-top: 34px; padding: 24px var(--gut); border-top: 1px solid rgba(255,255,255,.08); font-size: 13px; }
+	.footer-bottom a { color: #aeb4dc; text-decoration: none; transition: color .2s; }
+	@media (max-width: 1000px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 44px; } }
+	@media (max-width: 600px) {
+		.footer-grid { grid-template-columns: 1fr; padding: 60px var(--gut) 40px; }
+		.footer-bottom { flex-direction: column; gap: 6px; }
+	}
+</style>

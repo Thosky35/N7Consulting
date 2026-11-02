@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import PageHero from '../components/PageHero.astro';
+import NextPage from '../components/NextPage.astro';
+import Deco from '../components/Deco.astro';
+import { method } from '../data/siteContent';
+import { teamImage } from '../data/home';
+
+const tones = ['cobalt', 'sun', 'night'];
+---
+
+<Layout title="Notre méthode | N7Consulting" description="Du cahier des charges à la livraison : découvrez la méthode N7 Consulting.">
+	<SiteHeader />
+	<main id="contenu">
+		<PageHero
+			image={method[0].image}
+			crumbs={[{ label: 'Accueil', href: '/' }, { label: 'Notre méthode' }]}
+			eyebrow="Comment ça se passe"
+			lead="Notre méthode"
+			em="en action"
+		/>
+
+		<section class="steps" aria-label="Notre méthode en action">
+			<Deco kind="constellation" style="right:4%;top:26px;width:280px;color:#ffe680;opacity:.4" />
+			<Deco kind="circuit" style="left:var(--gut);bottom:20px;width:280px;color:#fff;opacity:.12" />
+			<div class="hs-sticky">
+				<ol class="hs-track">
+					{method.map((step, i) => (
+						<li class={`step tone-${tones[i % 3]}`}>
+							<div class="step-img">
+								<img src={step.image} alt="" loading="lazy" />
+							</div>
+							<span class="step-num" aria-hidden="true">{step.number}</span>
+							<div class="step-copy">
+								<h2>{step.title}</h2>
+								<p>{step.text}</p>
+							</div>
+						</li>
+					))}
+				</ol>
+				<div class="hs-bar" aria-hidden="true"></div>
+			</div>
+		</section>
+
+		<NextPage href="/realisations" title="Réalisations" image={teamImage} />
+	</main>
+	<SiteFooter />
+</Layout>
+
+<style>
+	.steps { position: relative; overflow: hidden; background: var(--navy-d); color: #fff; }
+	.steps :global(.hs-track) { position: relative; }
+	.step { position: relative; overflow: hidden; display: grid; grid-template-rows: 240px auto; min-height: 460px; border-radius: var(--r-l); }
+	.tone-cobalt { background: linear-gradient(135deg, #2433e8, #3b4bff 60%, #6a3df0); }
+	.tone-sun { background: var(--gold); color: var(--navy); }
+	.tone-night { background: linear-gradient(135deg, #1b2590, #0b1033); border: 1px solid rgba(255,230,128,.25); }
+	.step-img { position: relative; min-height: 220px; overflow: hidden; }
+	.step-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+	.step:hover .step-img img { transform: scale(1.07); }
+	.step-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(6,10,34,.55), transparent 60%); }
+	.step-num { position: absolute; right: 24px; top: 6px; z-index: 1; font-family: var(--display); font-size: clamp(62px, 5.9vw, 89px); font-weight: 800; line-height: 1; letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 3px #fff; }
+	.step-copy { padding: 28px 32px 34px; }
+	.step-copy h2 { margin: 0 0 12px; font-size: clamp(23.5px, 2.3vw, 34.5px); font-weight: 800; line-height: 1; letter-spacing: -.045em; }
+	.step-copy p { margin: 0; font-size: 15px; line-height: 1.7; opacity: .92; }
+	@media (max-width: 900px) {
+		
+		.step { grid-template-rows: 220px auto; min-height: 0; }
+	}
+</style>

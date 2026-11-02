@@ -1,0 +1,60 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import PageHero from '../../components/PageHero.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { articles } from '../../data/siteContent';
+import { teamImage } from '../../data/home';
+---
+
+<Layout title="Actualités | N7Consulting" description="Études de cas, événements, vie de la Junior et guides pratiques : suivez l’actualité de N7 Consulting.">
+	<SiteHeader />
+	<main class="news-page">
+		<PageHero
+			image={teamImage}
+			crumbs={[{ label: 'Accueil', href: '/' }, { label: 'Actualités' }]}
+			eyebrow="Journal de la Junior"
+			lead="Les"
+			em="actualités"
+			text="Études de cas, événements, vie de la Junior et guides pratiques : suivez l’actualité de N7 Consulting, la Junior-Entreprise de l’ENSEEIHT."
+		/>
+		<section class="article-grid" aria-label="Tous les articles">
+			{articles.map((article) => (
+				<article class="article-card">
+					<a class="card-image" href={`/actualites/${article.slug}`} aria-label={`Lire : ${article.title}`}><img src={article.image} alt="" loading="lazy" /></a>
+					<div class="card-content">
+						<div class="card-meta"><span>{article.category}</span><time datetime={article.dateIso}>{article.date}</time></div>
+						<h2><a href={`/actualites/${article.slug}`}>{article.title}</a></h2>
+						<p>{article.intro}</p>
+						<a class="read-more" href={`/actualites/${article.slug}`}>Lire l’article <span aria-hidden="true">↗</span></a>
+					</div>
+				</article>
+			))}
+		</section>
+	</main>
+	<SiteFooter />
+</Layout>
+
+<style>
+	.article-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: clamp(60px, 7vw, 90px) var(--gut) clamp(80px, 9vw, 120px); background: var(--paper); }
+	.article-card { display: flex; flex-direction: column; overflow: hidden; background: #fff; border-radius: var(--r-l); transition: box-shadow .3s ease; }
+	.article-card:hover { box-shadow: 0 18px 36px -22px rgba(6,10,34,.35); }
+	.card-image { height: 240px; display: block; overflow: hidden; background: var(--blue); }
+	.card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
+	.article-card:hover .card-image img { transform: scale(1.02); }
+	.card-content { display: flex; flex: 1; flex-direction: column; align-items: flex-start; padding: 26px 28px 28px; }
+	.card-meta { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px; color: #7b80a3; font-size: 13.5px; }
+	.card-meta span { padding: 4px 12px; border-radius: 999px; background: rgba(47,63,224,.1); color: var(--gold-d); font-size: 12.5px; font-weight: 600; }
+	.article-card h2 { margin: 16px 0 12px; font-size: 20px; font-weight: 700; line-height: 1.2; letter-spacing: -.02em; }
+	.article-card h2 a { color: var(--navy); text-decoration: none; transition: color .2s; }
+	.article-card h2 a:hover { color: var(--gold-d); }
+	.article-card p { margin: 0 0 22px; color: var(--mut); font-size: 14px; line-height: 1.7; }
+	.read-more { display: inline-flex; align-items: center; gap: 14px; margin-top: auto; padding-bottom: 5px; border-bottom: 2px solid var(--gold); color: var(--navy); font-size: 13.5px; font-weight: 600; text-decoration: none; transition: gap .35s var(--ease); }
+	.read-more:hover { gap: 22px; }
+	.read-more span { color: var(--gold-d); }
+	@media (max-width: 900px) { .article-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+	@media (max-width: 600px) {
+		.article-grid { grid-template-columns: 1fr; }
+		.card-image { height: 210px; }
+	}
+</style>

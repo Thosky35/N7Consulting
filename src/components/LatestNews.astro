@@ -1,0 +1,51 @@
+---
+import { articles } from '../data/siteContent';
+const latest = articles.slice(0, 3);
+---
+
+<section class="latest" aria-labelledby="latest-title">
+	<div class="latest-head">
+		<div data-reveal="up">
+			<p class="n7-eyebrow on-light">Journal de la Junior</p>
+			<h2 id="latest-title" class="n7-h2 hl-title">Dernières <em>actualités</em></h2>
+			<p class="sub">Études réalisées, événements et vie de la Junior : suivez ce qui se passe chez N7 Consulting.</p>
+		</div>
+		<a class="n7-link" data-reveal="up" data-delay="150" href="/actualites">Toutes les actualités <span aria-hidden="true">→</span></a>
+	</div>
+	<div class="grid" data-stagger="130">
+		{latest.map((a) => (
+			<article class="card">
+				<a class="img" href={`/actualites/${a.slug}`} aria-label={`Lire : ${a.title}`}><img src={a.image} alt="" loading="lazy" /></a>
+				<div class="body">
+					<div class="meta"><span>{a.category}</span><time datetime={a.dateIso}>{a.date}</time></div>
+					<h3><a href={`/actualites/${a.slug}`}>{a.title}</a></h3>
+					<p>{a.intro}</p>
+					<a class="more" href={`/actualites/${a.slug}`}>Lire l’article <span aria-hidden="true">↗</span></a>
+				</div>
+			</article>
+		))}
+	</div>
+</section>
+
+<style>
+	.latest { padding: clamp(80px, 9vw, 130px) var(--gut); background: var(--paper); }
+	.latest-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; margin-bottom: 56px; }
+	.sub { max-width: 540px; margin: 18px 0 0; color: var(--mut); font-size: 16px; }
+	.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+	.card { display: flex; flex-direction: column; overflow: hidden; background: #fff; border-radius: var(--r-l); transition: transform .6s var(--ease), box-shadow .5s var(--ease); }
+	.card:hover { transform: translateY(-3px); box-shadow: 0 40px 70px -28px rgba(6,10,34,.4); }
+	.img { display: block; height: 230px; overflow: hidden; background: var(--blue); }
+	.img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
+	.card:hover .img img { transform: scale(1.03); }
+	.body { display: flex; flex: 1; flex-direction: column; align-items: flex-start; padding: 26px 28px 28px; }
+	.meta { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px; color: #7b80a3; font-size: 13.5px; }
+	.meta span { padding: 4px 12px; border-radius: 999px; background: rgba(47,63,224,.1); color: var(--gold-d); font-size: 12.5px; font-weight: 600; }
+	h3 { margin: 16px 0 10px; font-size: 19.5px; font-weight: 700; line-height: 1.2; letter-spacing: -.02em; }
+	h3 a { color: var(--navy); text-decoration: none; }
+	h3 a:hover { color: var(--gold-d); }
+	.body p { margin: 0 0 22px; color: var(--mut); font-size: 14px; line-height: 1.7; }
+	.more { margin-top: auto; padding-bottom: 5px; border-bottom: 2px solid var(--gold); color: var(--navy); font-size: 13.5px; font-weight: 600; text-decoration: none; transition: letter-spacing .3s; }
+	.more span { color: var(--gold-d); margin-left: 10px; display: inline-block; transition: transform .4s var(--ease); }
+	.card:hover .more span { transform: translate(3px, -3px); }
+	@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .latest-head { flex-direction: column; align-items: flex-start; gap: 24px; } }
+</style>

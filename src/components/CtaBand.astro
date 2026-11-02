@@ -1,0 +1,21 @@
+---
+---
+
+<section class="cta-band" aria-labelledby="cta-title">
+	<div class="cta-copy">
+		<h2 id="cta-title" class="cta-title">Un projet en tête ? <span>Parlons-en.</span></h2>
+	</div>
+	<a class="n7-btn n7-btn-navy" href="/contact">Passez à l’action <span aria-hidden="true">↗</span></a>
+</section>
+
+<style>
+	.cta-band { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 28px var(--gut); background: linear-gradient(115deg, var(--gold) 20%, var(--gold-l)); color: var(--navy); }
+	.cta-copy { position: relative; }
+	.cta-title { margin: 0; font-size: clamp(18px, 2vw, 24px); font-weight: 800; line-height: 1.2; letter-spacing: -.02em; }
+	.cta-title span { font-weight: 600; opacity: .75; }
+	.n7-btn { position: relative; flex-shrink: 0; min-height: 46px; padding: 0 6px 0 20px; font-size: 14px; }
+	.n7-btn > span { width: 34px; height: 34px; }
+	@media (max-width: 800px) {
+		.cta-band { flex-direction: column; align-items: flex-start; gap: 16px; }
+	}
+</style>

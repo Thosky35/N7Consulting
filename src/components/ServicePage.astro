@@ -1,0 +1,162 @@
+---
+import PageHero from './PageHero.astro';
+import Icon from './Icon.astro';
+import NextPage from './NextPage.astro';
+import CompanyLogo from './CompanyLogo.astro';
+import Deco from './Deco.astro';
+import TrustStrip from './TrustStrip.astro';
+import { rich } from '../lib/rich';
+import { poles, site, method } from '../data/siteContent';
+import type { ServicePage as ServicePageData } from '../data/siteContent';
+
+interface Props {
+	page: ServicePageData;
+	slug: string;
+}
+const { page, slug } = Astro.props;
+const CDN = 'https://cdn.prod.website-files.com/67a9fca34d150f14e73d9ba7/';
+const heroByPole: Record<string, string> = {
+	'digital-data': CDN + '67b47c8f0a38e41d18e4b7ed_MembreJE_PC_4_11zon.avif',
+	'ingenierie-it': CDN + '67b47c9509b063ec3f6e953b_journee_intervenant_je%20%287%29_2_11zon.avif',
+	'eco-ingenierie': CDN + '67b47c8f0a38e41d18e4b7cd_3EA_Centrale_1_11zon-p-500.avif',
+};
+---
+
+<PageHero
+	tall
+	image={heroByPole[slug]}
+	crumbs={[{ label: 'Accueil', href: '/' }, { label: 'Nos prestations' }, { label: page.title }]}
+	eyebrow={page.eyebrow}
+	lead={page.headingLead}
+	em={page.headingEm}
+	text={page.lead}
+>
+	<a class="n7-btn n7-btn-gold" href="/contact">Demander un devis <span aria-hidden="true">↗</span></a>
+	<a class="n7-link n7-link-light" href={site.brochure} target="_blank" rel="noreferrer">Télécharger la plaquette <span aria-hidden="true">↓</span></a>
+</PageHero>
+
+<nav class="pole-nav" aria-label="Nos pôles d’expertise" data-reveal="up" data-delay="300">
+	{poles.map((p) => (
+		<a href={`/${p.slug}`} class:list={['pole', { current: p.slug === slug }]} aria-current={p.slug === slug ? 'page' : undefined}>
+			<span class="pole-num">{p.number}</span>
+			<span class="pole-body"><strong>{p.title}</strong><small>{p.text}</small></span>
+		</a>
+	))}
+</nav>
+
+{page.groups.map((group, g) => (
+	<section class:list={['group', g % 2 === 0 ? 'tone-paper' : 'tone-white']} aria-labelledby={`group-${g}`}>
+		<div class="group-head">
+			<div data-reveal="up">
+				<p class="n7-eyebrow on-light">{group.eyebrow}</p>
+				<h2 id={`group-${g}`} class="n7-h2 hl-title">{group.title}</h2>
+			</div>
+			<p class="group-text" data-reveal="up" data-delay="150" set:html={rich(group.text)} />
+		</div>
+		<div class="service-list" data-stagger="120">
+			{group.services.map((service) => (
+				<article class="service">
+					<div class="service-head">
+						<span class="icon-frame"><Icon name={service.icon} size={32} /></span>
+						<h3>{service.title}</h3>
+					</div>
+					<div class="service-body">
+						<ul class="checks">
+							{service.items.map((item) => (
+								<li>
+									<span class="chk"><svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><path d="m4 10.500 4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.600" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+									<span set:html={rich(item)} />
+								</li>
+							))}
+						</ul>
+						<div class="service-actions">
+							<a class="n7-btn n7-btn-navy" href="/contact">Discutons de votre projet <span aria-hidden="true">↗</span></a>
+							<a class="n7-link" href="/methode">Notre méthode <span aria-hidden="true">→</span></a>
+						</div>
+					</div>
+				</article>
+			))}
+		</div>
+	</section>
+))}
+
+{page.cases && (
+	<section class="cases" aria-labelledby="cases-title">
+		<Deco kind="constellation" style="right:4%;top:28px;width:260px;color:#ffe680;opacity:.4" />
+		<Deco kind="gear" style="left:-80px;bottom:-110px;width:320px;color:#fff;opacity:.06" />
+		<div class="cases-head" data-reveal="up">
+			<p class="n7-eyebrow">{page.cases.eyebrow}</p>
+			<h2 id="cases-title" class="n7-h2 on-dark">{page.cases.title}</h2>
+		</div>
+		<div class="case-grid" data-stagger="140">
+			{page.cases.items.map((c) => (
+				<article class="case">
+					<span class="case-tag">{c.tag}</span>
+					<h3 class="case-client"><CompanyLogo name={c.client} size={44} strict />{c.client}</h3>
+					<p>{c.text}</p>
+				</article>
+			))}
+		</div>
+	</section>
+)}
+
+<TrustStrip />
+<NextPage href="/methode" title="Notre méthode" image={method[1].image} />
+
+<style>
+	.pole-nav { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: -62px var(--gut) 0; padding: 10px; background: #fff; border-radius: var(--r-l); box-shadow: 0 30px 70px -20px rgba(6,10,34,.35); }
+	.pole { display: flex; align-items: center; gap: 16px; padding: 20px 24px; border-radius: 22px; color: var(--navy); text-decoration: none; transition: background .3s, color .3s, transform .45s var(--ease); }
+	.pole:hover { background: var(--paper); transform: translateY(-3px); }
+	.pole.current { background: var(--navy); color: #fff; }
+	.pole-num { display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0; border-radius: 50%; background: var(--paper); color: var(--gold-d); font-family: var(--display); font-size: 13.5px; font-weight: 700; transition: background .3s, color .3s; }
+	.pole.current .pole-num { background: var(--gold); color: var(--navy); }
+	.pole-body strong { display: block; font-family: var(--display); font-size: 18px; letter-spacing: -.015em; }
+	.pole-body small { color: var(--mut); font-size: 13.5px; }
+	.pole.current small { color: #aeb4dc; }
+
+	.group { padding: clamp(80px, 9vw, 120px) var(--gut); }
+	.pole-nav + .group { padding-top: clamp(110px, 11vw, 150px); }
+	.tone-paper { background: var(--paper); }
+	.tone-white { background: #fff; }
+	.group-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; margin-bottom: 56px; }
+	.group-text { max-width: 540px; margin: 0 0 6px; color: var(--mut); font-size: 16px; line-height: 1.8; }
+	.group-text :global(strong) { color: var(--navy); font-weight: 600; }
+
+	.service-list { display: grid; gap: 22px; }
+	.service { display: grid; grid-template-columns: minmax(250px, .75fr) 2fr; gap: 48px; padding: 44px 46px; background: #fff; border: 1px solid var(--line); border-radius: var(--r-l); transition: box-shadow .5s var(--ease), border-color .4s, transform .5s var(--ease); }
+	.tone-white .service { background: var(--paper); border-color: transparent; }
+	.service:hover { box-shadow: 0 34px 64px -26px rgba(11,16,51,.32); transform: translateY(-4px); }
+	.service-head { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; align-self: start; position: sticky; top: 110px; }
+	.icon-frame { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 22px; background: var(--navy); color: var(--gold); transition: transform .6s var(--ease), border-radius .6s var(--ease), background .3s, color .3s; }
+	.service:hover .icon-frame { transform: rotate(-8deg); border-radius: 50%; background: var(--gold); color: var(--navy); }
+	.service-head h3 { margin: 0; color: var(--navy); font-size: clamp(23.5px, 2.4vw, 30px); font-weight: 700; line-height: 1.08; letter-spacing: -.025em; }
+	.checks { display: grid; gap: 18px; margin: 0 0 34px; padding: 0; list-style: none; }
+	.checks li { display: grid; grid-template-columns: 28px 1fr; gap: 16px; color: var(--ink); font-size: 15.5px; line-height: 1.65; }
+	.chk { display: grid; place-items: center; width: 26px; height: 26px; margin-top: 1px; border-radius: 50%; background: var(--gold); color: var(--navy); }
+	.checks :global(strong) { color: var(--navy); font-weight: 600; }
+	.service-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 22px 30px; }
+	.service-actions .n7-btn { min-height: 54px; font-size: 14px; }
+	.service-actions .n7-btn > span { width: 36px; height: 36px; }
+
+	.cases { position: relative; overflow: hidden; padding: clamp(80px, 9vw, 120px) var(--gut); background: linear-gradient(160deg, var(--navy-d), #141b6b); color: #fff; }
+	.cases::before { content: ''; position: absolute; width: 600px; height: 600px; left: -240px; bottom: -300px; border-radius: 50%; background: radial-gradient(circle, rgba(59,75,255,.4), transparent 66%); pointer-events: none; }
+	.cases-head { position: relative; margin-bottom: 52px; }
+	.case-client { display: flex; align-items: center; gap: 14px; }
+	.case-grid { position: relative; display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+	.case { padding: 40px 38px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,230,128,.2); border-radius: var(--r-l); transition: transform .6s var(--ease), border-color .4s, background .4s; }
+	.case:hover { transform: translateY(-3px); border-color: var(--gold); background: rgba(255,255,255,.09); }
+	.case-tag { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255,212,59,.16); color: var(--gold-l); font-size: 13px; font-weight: 600; }
+	.case h3 { margin: 18px 0 14px; font-size: 25px; font-weight: 700; line-height: 1.15; letter-spacing: -.02em; }
+	.case p { margin: 0; color: #d3d7f5; font-size: 15px; line-height: 1.8; }
+
+	@media (max-width: 960px) {
+		.pole-nav { grid-template-columns: 1fr; margin-top: -44px; border-radius: var(--r-m); }
+		.pole { padding: 16px 18px; }
+		.pole-nav + .group { padding-top: 90px; }
+		.group-head { flex-direction: column; align-items: flex-start; gap: 20px; margin-bottom: 40px; }
+		.service { grid-template-columns: 1fr; gap: 28px; padding: 34px 26px; }
+		.service-head { position: static; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 18px; }
+		.service-head h3 { flex-basis: 100%; }
+		.case-grid { grid-template-columns: 1fr; }
+	}
+</style>

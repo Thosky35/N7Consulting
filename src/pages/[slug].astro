@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContentPage from '../components/ContentPage.astro';
+import { pages } from '../data/siteContent';
+
+export function getStaticPaths() {
+	return Object.entries(pages).map(([slug, page]) => ({
+		params: { slug },
+		props: { page },
+	}));
+}
+
+const { page } = Astro.props;
+---
+
+<Layout title={`${page.title} | N7Consulting`} description={page.intro}>
+	<ContentPage page={page} slug={Astro.params.slug ?? ''} />
+</Layout>

@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import AboutPage from '../components/AboutPage.astro';
+import { pages } from '../data/siteContent';
+import type { AboutPage as AboutPageData } from '../data/siteContent';
+
+const page = pages['qui-sommes-nous'] as AboutPageData;
+---
+
+<Layout title="Notre histoire | N7Consulting" description={page.intro}>
+	<SiteHeader />
+	<main id="contenu">
+		<AboutPage page={page} view="history" />
+	</main>
+	<SiteFooter />
+</Layout>

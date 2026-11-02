@@ -1,0 +1,86 @@
+---
+/* Motifs décoratifs sobres : ingénierie (engrenage, circuit, cotation, repères de plan, sinusoïde) et étoiles (constellation).
+   Tout est en SVG, trait fin, couleur héritée (currentColor) ; la position et la taille se règlent via `style`. */
+interface Props {
+	kind: 'gear' | 'constellation' | 'circuit' | 'frame' | 'dims' | 'sine';
+	style?: string;
+	label?: string;
+}
+const { kind, style = '', label = '' } = Astro.props;
+
+const star = (x: number, y: number, k: number) =>
+	`M${x} ${y - k}Q${x} ${y} ${x + k} ${y}Q${x} ${y} ${x} ${y + k}Q${x} ${y} ${x - k} ${y}Q${x} ${y} ${x} ${y - k}Z`;
+
+// engrenage
+const N = 14, R = 46, r = 37, s = (2 * Math.PI) / N;
+const pt = (rad: number, a: number) => `${(50 + rad * Math.cos(a)).toFixed(1)} ${(50 + rad * Math.sin(a)).toFixed(1)}`;
+let gear = '';
+for (let i = 0; i < N; i++) {
+	const a = i * s;
+	gear += (i === 0 ? 'M' : 'L') + [pt(r, a - 0.32 * s), pt(R, a - 0.2 * s), pt(R, a + 0.2 * s), pt(r, a + 0.32 * s)].join('L');
+}
+gear += 'Z';
+
+// constellation
+const nodes: [number, number, number][] = [[14, 104, 5], [66, 62, 8], [118, 86, 5], [168, 30, 10], [226, 54, 6]];
+const lines = nodes.map(([x, y]) => `${x},${y}`).join(' ');
+const sparks: [number, number, number][] = [[40, 24, 4], [96, 22, 3], [150, 112, 4], [204, 100, 3], [238, 14, 4]];
+
+// sinusoïde
+let sine = '';
+for (let x = 0; x <= 240; x += 4) sine += (x === 0 ? 'M' : 'L') + x + ' ' + (30 + 18 * Math.sin((x / 240) * Math.PI * 4)).toFixed(1);
+---
+
+{kind === 'gear' && (
+	<svg class="deco" style={style} viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+		<path d={gear} />
+		<circle cx="50" cy="50" r="27" />
+		<circle cx="50" cy="50" r="12" />
+		<path d="M50 38v-8M50 62v8M38 50h-8M62 50h8" />
+	</svg>
+)}
+{kind === 'constellation' && (
+	<svg class="deco" style={style} viewBox="0 0 250 130" aria-hidden="true" focusable="false">
+		<polyline points={lines} stroke-dasharray="2 5" />
+		{nodes.map(([x, y, k]) => <path class="solid" d={star(x, y, k)} />)}
+		{sparks.map(([x, y, k]) => <path class="solid" d={star(x, y, k)} />)}
+	</svg>
+)}
+{kind === 'circuit' && (
+	<svg class="deco" style={style} viewBox="0 0 260 90" aria-hidden="true" focusable="false">
+		<path d="M0 22H48L68 42H132L152 22H214" />
+		<path d="M0 62H88L108 82H190L210 62H260" />
+		<path d="M132 42V62" />
+		<circle cx="214" cy="22" r="5" />
+		<circle cx="48" cy="22" r="3" />
+		<circle cx="190" cy="82" r="3" />
+		<rect x="120" y="36" width="24" height="12" rx="2" />
+	</svg>
+)}
+{kind === 'frame' && (
+	<svg class="deco" style={style} viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+		<path d="M2 30V2H30M90 2h28v28M2 90v28h28M118 90v28H90" />
+		<circle cx="60" cy="60" r="16" />
+		<path d="M60 36v48M36 60h48" />
+	</svg>
+)}
+{kind === 'dims' && (
+	<svg class="deco" style={style} viewBox="0 0 200 30" aria-hidden="true" focusable="false">
+		<path d="M4 15H72M128 15H196M4 6v18M196 6v18" />
+		<path class="solid" d="M4 15l8-4v8zM196 15l-8-4v8z" />
+		<text x="100" y="19" text-anchor="middle">{label}</text>
+	</svg>
+)}
+{kind === 'sine' && (
+	<svg class="deco" style={style} viewBox="0 0 240 60" aria-hidden="true" focusable="false">
+		<path d="M0 30H240M0 4v52" opacity=".5" />
+		<path d={sine} />
+	</svg>
+)}
+
+<style>
+	.deco { position: absolute; z-index: 0; max-width: none; height: auto; overflow: visible; color: currentColor; opacity: .16; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+	.deco :is(path, circle, rect, polyline, line) { vector-effect: non-scaling-stroke; }
+	.deco .solid { fill: currentColor; stroke: none; }
+	.deco text { fill: currentColor; stroke: none; font: 600 11px var(--sans); letter-spacing: .08em; }
+</style>

@@ -1,0 +1,19 @@
+---
+/* Logo officiel N7 Consulting (celui du site n7consulting.fr).
+   Pour l’héberger vous-même : déposez-le dans /public et remplacez LOGO_SRC. L’ancien « N7 » ne sert que de secours. */
+interface Props { height?: number }
+const { height = 46 } = Astro.props;
+const LOGO_SRC = 'https://cdn.prod.website-files.com/67a9fca34d150f14e73d9ba7/67a9fe01c0749a737a00f77e_Logo_N7C_classic_fond_bleu.png';
+---
+
+<span class="brand-logo" style={`--h:${height}px`}>
+	<img src={LOGO_SRC} alt="N7 Consulting" height={height} onerror="this.parentElement.classList.add('nologo');this.remove()" />
+	<span class="fallback" aria-hidden="true">N7</span>
+</span>
+
+<style>
+	.brand-logo { display: inline-flex; align-items: center; height: var(--h); transition: transform .5s var(--ease); }
+	.brand-logo img { display: block; height: 100%; width: auto; max-width: 220px; object-fit: contain; }
+	.fallback { display: none; place-items: center; width: var(--h); height: var(--h); border-radius: 14px; background: var(--gold); color: var(--navy); font-family: var(--display); font-size: 19px; font-weight: 800; }
+	.nologo .fallback { display: grid; }
+</style>

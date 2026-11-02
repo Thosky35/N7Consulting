@@ -1,0 +1,437 @@
+---
+import PageHero from './PageHero.astro';
+import NextPage from './NextPage.astro';
+import LinkCard from './LinkCard.astro';
+import Deco from './Deco.astro';
+import TrustStrip from './TrustStrip.astro';
+import Icon from './Icon.astro';
+import { rich } from '../lib/rich';
+import { splitStat } from '../lib/count';
+import type { AboutPage as AboutPageData } from '../data/siteContent';
+
+interface Props {
+	page: AboutPageData;
+	view?: 'main' | 'team' | 'values' | 'environment' | 'history';
+}
+const { page, view = 'main' } = Astro.props;
+
+const about = { label: 'Qui sommes-nous ?', href: '/qui-sommes-nous' };
+const heroes = {
+	main: {
+		crumbs: [{ label: 'Accueil', href: '/' }, { label: about.label }],
+		eyebrow: page.eyebrow,
+		lead: page.headingLead,
+		em: page.headingEm,
+		text: page.lead,
+	},
+	team: {
+		crumbs: [{ label: 'Accueil', href: '/' }, about, { label: 'Notre équipe' }],
+		eyebrow: 'Le mandat en cours',
+		lead: 'Notre',
+		em: 'équipe',
+		text: 'Faites connaissance avec les étudiants qui pilotent la Junior et accompagnent vos projets au quotidien.',
+	},
+	values: {
+		crumbs: [{ label: 'Accueil', href: '/' }, about, { label: 'Nos valeurs' }],
+		eyebrow: 'Ce qui nous guide',
+		lead: 'Nos',
+		em: 'valeurs',
+		text: undefined,
+	},
+	environment: {
+		crumbs: [{ label: 'Accueil', href: '/' }, about, { label: 'Notre environnement' }],
+		eyebrow: 'Notre environnement',
+		lead: 'Un écosystème',
+		em: 'qui nous porte',
+		text: undefined,
+	},
+	history: {
+		crumbs: [{ label: 'Accueil', href: '/' }, about, { label: 'Notre histoire' }],
+		eyebrow: 'Depuis 1977',
+		lead: 'Voici notre',
+		em: 'histoire',
+		text: undefined,
+	},
+};
+const CDN = 'https://cdn.prod.website-files.com/67a9fca34d150f14e73d9ba7/';
+const heroImages = {
+	main: 'https://cdn.prod.website-files.com/67a9fca34d150f14e73d9ba7/68542b57851d85fb371d0b85_photogrp-4.webp',
+	team: CDN + '67b47c9509b063ec3f6e953b_journee_intervenant_je%20%287%29_2_11zon.avif',
+	values: CDN + '67b47c90b7e1481582208392_journee_intervenant_je%20%2878%29_3_11zon.avif',
+	environment: CDN + '67b47c8f28387bca819ef6c0_N7C_CRPSO2024_5_11zon.avif',
+	history: CDN + '67bdba0d63dbef114fbc6f39_flag_photo.webp',
+};
+const hero = heroes[view];
+
+const journey = [
+	{ href: '/equipe', kicker: 'Le mandat en cours', title: 'Notre équipe', tone: 'cobalt' },
+	{ href: '/valeurs', kicker: 'Ce qui nous guide', title: 'Nos valeurs', photo: heroImages.values },
+	{ href: '/environnement', kicker: 'Notre environnement', title: 'Un écosystème qui nous porte', tone: 'night' },
+	{ href: '/histoire', kicker: 'Depuis 1977', title: 'Voici notre histoire', photo: heroImages.history },
+];
+const cardTone = ['cobalt', 'sun', 'night'];
+---
+
+<PageHero image={heroImages[view]} crumbs={hero.crumbs} eyebrow={hero.eyebrow} lead={hero.lead} em={hero.em} text={hero.text}>
+	{view === 'main' && <a class="n7-btn n7-btn-gold" href="/contact">Nous contacter <span aria-hidden="true">↗</span></a>}
+</PageHero>
+
+{view === 'main' && (
+	<>
+		<TrustStrip />
+		<section class="what section" aria-labelledby="what-title">
+			<Deco kind="circuit" style="left:var(--gut);bottom:24px;width:260px;color:#1b2590;opacity:.18" />
+			<div class="what-copy" data-reveal="left">
+				<p class="n7-eyebrow on-light">{page.whatIs.eyebrow}</p>
+				<h2 id="what-title" class="n7-h2 hl-title">{page.whatIs.title}</h2>
+				<p>{page.whatIs.text}</p>
+				<a class="n7-link" href={page.whatIs.link.href} target="_blank" rel="noreferrer">{page.whatIs.link.label} <span aria-hidden="true">↗</span></a>
+			</div>
+			<dl class="stat-grid" data-stagger="110">
+				{page.stats.map((s) => {
+					const v = splitStat(s.value);
+					return (
+						<div class="stat">
+							<dt>{s.label}</dt>
+							<dd>
+								{v.pre}
+								{v.countable ? <span data-counter={v.num} data-sep={v.sep || undefined}>{v.sep ? v.num.replace(/\B(?=(\d{3})+(?!\d))/g, v.sep) : v.num}</span> : <span>{v.num}</span>}
+								{v.post && <span class="post">{v.post}</span>}
+							</dd>
+						</div>
+					);
+				})}
+			</dl>
+		</section>
+
+		<section class="reasons section tone-paper" aria-labelledby="reasons-title">
+			<div class="head" data-reveal="up">
+				<p class="n7-eyebrow on-light">Nos atouts</p>
+				<h2 id="reasons-title" class="n7-h2 hl-title">Pourquoi collaborer avec <em>notre Junior-Entreprise ?</em></h2>
+			</div>
+			<div class="reason-grid" data-stagger="120">
+				{page.reasons.map((r) => (
+					<article class="reason">
+						<span class="icon-frame"><Icon name={r.icon} size={32} /></span>
+						<h3>{r.title}</h3>
+						<p>{r.text}</p>
+					</article>
+				))}
+			</div>
+		</section>
+
+		<section class="journey section" aria-label="Aller plus loin">
+			<div class="journey-grid" data-stagger="120">
+				{journey.map((j, i) => (
+					<LinkCard href={j.href} kicker={j.kicker} title={j.title} image={j.photo} num={`0${i + 1}`} />
+				))}
+			</div>
+		</section>
+	</>
+)}
+
+{view === 'team' && (
+	<>
+		<section class="team section" aria-label="Notre équipe">
+			<ul class="team-grid" data-stagger="70">
+				{page.team.map((m) => (
+					<li class="member">
+						<div class="photo" data-tilt><img src={m.photo} alt={`${m.first} ${m.last}`} loading="lazy" /></div>
+						<div class="member-info">
+							<h3>{m.first} <span>{m.last}</span></h3>
+							<p>{m.role}</p>
+							<a href={m.linkedin} target="_blank" rel="noreferrer" aria-label={`Profil LinkedIn de ${m.first} ${m.last}`}>
+								<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4v11.5H3V9.75Zm6.5 0h3.83v1.57h.06c.53-1 1.84-2.07 3.79-2.07 4.05 0 4.8 2.67 4.8 6.13v5.87h-4v-5.2c0-1.24-.02-2.84-1.73-2.84-1.73 0-2 1.35-2 2.75v5.29h-4V9.75Z" /></svg>
+							</a>
+						</div>
+					</li>
+				))}
+			</ul>
+		</section>
+		<NextPage href="/valeurs" title="Nos valeurs" image={heroImages.values} />
+	</>
+)}
+
+{view === 'values' && (
+	<>
+		<section class="values section" aria-label="Nos valeurs">
+			<ul class="value-stack" data-stagger="110">
+				{page.values.map((v) => (
+					<li>
+						<span class="icon-frame"><Icon name={v.icon} size={36} /></span>
+						<strong>{v.title}</strong>
+					</li>
+				))}
+			</ul>
+			<figure class="purpose">
+				<figcaption data-reveal="up">Notre raison d’être</figcaption>
+				<blockquote>{page.purpose}</blockquote>
+			</figure>
+		</section>
+		<NextPage href="/environnement" title="Notre environnement" image={heroImages.environment} />
+	</>
+)}
+
+{view === 'environment' && (
+	<>
+		<section class="env section tone-paper" aria-label="Notre environnement">
+			<div class="env-tabs" role="tablist" aria-label="Notre environnement">
+				{page.environment.map((e, i) => (
+					<a role="tab" class:list={['env-tab', { active: i === 0 }]} id={`tab-${e.id}`} href={`#${e.id}`} aria-controls={e.id} aria-selected={i === 0 ? 'true' : 'false'} data-tab={e.id}>{e.label}</a>
+				))}
+			</div>
+			{page.environment.map((e, i) => (
+				<article class:list={['env-panel', { active: i === 0 }]} id={e.id} role="tabpanel" aria-labelledby={`tab-${e.id}`} data-panel={e.id}>
+					<div class:list={['env-visual', e.imageKind]}>
+						<img src={e.image} alt={e.label} loading="lazy" />
+					</div>
+					<div class="env-copy">
+						<p class="n7-eyebrow on-light">{e.label}</p>
+						<h3>{e.title}</h3>
+						<p>{e.text}</p>
+						{e.list && (
+							<ul class="env-list">
+								{e.list.map((item) => <li set:html={rich(item)} />)}
+							</ul>
+						)}
+						{e.facts && (
+							<dl class="facts">
+								{e.facts.map((f) => <div><dd>{f.value}</dd><dt>{f.label}</dt></div>)}
+							</dl>
+						)}
+					</div>
+				</article>
+			))}
+		</section>
+		<NextPage href="/histoire" title="Notre histoire" image={heroImages.history} />
+	</>
+)}
+
+{view === 'history' && (
+	<section class="history section tone-paper" aria-label="Notre histoire">
+		<Deco kind="circuit" style="right:var(--gut);top:28px;width:280px;color:#1b2590;opacity:.18" />
+		<ol class="timeline" id="timeline">
+			{page.timeline.map((t) => (
+				<li class="t-row">
+					<span class="t-year">{t.year}</span>
+					<span class="t-node" aria-hidden="true"><span class="t-fill"></span></span>
+					<div class:list={['t-card', { 'has-img': !!t.image }]}>
+						<ul>{t.items.map((item) => <li>{item}</li>)}</ul>
+						{t.image && (
+							<div class:list={['entry-img', t.imageKind]}><img src={t.image} alt={t.imageAlt ?? ''} loading="lazy" /></div>
+						)}
+					</div>
+				</li>
+			))}
+		</ol>
+	</section>
+)}
+
+<script is:inline>
+	(function () {
+		var rows = Array.prototype.slice.call(document.querySelectorAll('.t-row'));
+		if (!rows.length) return;
+		var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		var ticking = false;
+		var update = function () {
+			ticking = false;
+			var vh = window.innerHeight, mark = vh * 0.62, last = -1;
+			rows.forEach(function (row, i) {
+				var r = row.getBoundingClientRect();
+				var on = reduce || r.top + 30 < mark;
+				row.classList.toggle('on', on);
+				if (on) last = i;
+				var p = reduce ? 1 : (mark - (r.top + 30)) / Math.max(r.height - 30, 1);
+				row.style.setProperty('--p', Math.max(0, Math.min(1, p)).toFixed(3));
+			});
+			rows.forEach(function (row, i) { row.classList.toggle('current', i === last); });
+		};
+		var tick = function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+		window.addEventListener('scroll', tick, { passive: true });
+		window.addEventListener('resize', tick);
+		update();
+	})();
+</script>
+
+<script is:inline>
+	(function () {
+		var tabs = Array.prototype.slice.call(document.querySelectorAll('.env-tab'));
+		if (!tabs.length) return;
+		var panels = Array.prototype.slice.call(document.querySelectorAll('.env-panel'));
+		var select = function (id, focus) {
+			tabs.forEach(function (t) {
+				var on = t.getAttribute('data-tab') === id;
+				t.classList.toggle('active', on);
+				t.setAttribute('aria-selected', on ? 'true' : 'false');
+				t.tabIndex = on ? 0 : -1;
+				if (on && focus) t.focus();
+			});
+			panels.forEach(function (p) { p.classList.toggle('active', p.getAttribute('data-panel') === id); });
+		};
+		tabs.forEach(function (t, i) {
+			t.addEventListener('click', function (e) {
+				e.preventDefault();
+				var id = t.getAttribute('data-tab');
+				select(id);
+				try { history.replaceState(null, '', '#' + id); } catch (err) { location.hash = id; }
+				var sec = document.querySelector('.env-tabs');
+				if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			});
+			t.addEventListener('keydown', function (e) {
+				var n = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : null;
+				if (n === null) return;
+				e.preventDefault();
+				select(tabs[(n + tabs.length) % tabs.length].getAttribute('data-tab'), true);
+			});
+		});
+		var fromHash = function () {
+			var h = location.hash.replace('#', '');
+			if (h && tabs.some(function (t) { return t.getAttribute('data-tab') === h; })) select(h);
+		};
+		fromHash();
+		window.addEventListener('hashchange', fromHash);
+	})();
+</script>
+
+<style>
+	.what { position: relative; overflow: hidden; }
+	.section { padding: clamp(80px, 9vw, 130px) var(--gut); }
+	.tone-paper { background: var(--paper); }
+	.head { margin-bottom: clamp(40px, 5vw, 64px); }
+	.head .n7-h2 { max-width: 900px; }
+	.icon-frame { display: grid; place-items: center; width: 72px; height: 72px; flex-shrink: 0; border-radius: 22px; background: var(--navy); color: var(--gold); transition: transform .6s var(--ease), border-radius .6s var(--ease), background .3s, color .3s; }
+
+	.what { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 90px); align-items: center; }
+	.what-copy > p:not(.n7-eyebrow) { margin: 26px 0 32px; color: var(--mut); font-size: 17px; line-height: 1.8; }
+	.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 0; }
+	.stat { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 6px; min-height: 180px; padding: 28px; border-radius: var(--r-m); background: var(--paper); transition: transform .5s var(--ease), background .4s, color .4s; }
+	.stat:nth-child(2) { background: var(--cobalt); color: #fff; }
+	.stat:nth-child(3) { background: var(--gold); }
+	.stat:nth-child(4) { background: var(--navy); color: #fff; }
+	.stat:hover { transform: translateY(-2px); }
+	.stat dd { margin: 0; font-family: var(--display); font-size: clamp(28px, 3.1vw, 43.5px); font-weight: 800; line-height: 1; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+	.stat dd .post { opacity: .7; }
+	.stat dt { font-size: 14px; opacity: .85; }
+
+	.reason-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+	.reason { padding: 40px 34px 36px; background: #fff; border-radius: var(--r-l); transition: transform .6s var(--ease), box-shadow .5s var(--ease); }
+	.reason:hover { transform: translateY(-3px); box-shadow: 0 36px 64px -26px rgba(11,16,51,.38); }
+	.reason:hover .icon-frame { transform: rotate(-8deg); border-radius: 50%; background: var(--gold); color: var(--navy); }
+	.reason h3 { margin: 28px 0 12px; color: var(--navy); font-size: 22.5px; font-weight: 800; line-height: 1.1; letter-spacing: -.035em; }
+	.reason p { margin: 0; color: var(--mut); font-size: 15px; line-height: 1.75; }
+
+	/* Parcours vers les sous-pages */
+	.journey { padding-top: clamp(60px, 7vw, 100px); }
+	.journey-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+	/* Équipe */
+	.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(245px, 1fr)); gap: 22px; margin: 0; padding: 0; list-style: none; }
+	.member { overflow: hidden; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); transition: transform .6s var(--ease), box-shadow .5s var(--ease), border-color .3s; }
+	.member:hover { transform: translateY(-3px); box-shadow: 0 30px 56px -22px rgba(11,16,51,.4); border-color: var(--cobalt); }
+	.photo { height: 290px; background: radial-gradient(circle at 50% 30%, #3b4bff, var(--navy) 80%); overflow: hidden; transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .25s ease-out; }
+	.photo img { width: 100%; height: 100%; object-fit: contain; object-position: bottom center; transition: transform .8s var(--ease); }
+	.member:hover .photo img { transform: scale(1.03); }
+	.member-info { position: relative; padding: 20px 22px 22px; }
+	.member-info h3 { margin: 0; color: var(--navy); font-size: 19px; font-weight: 800; line-height: 1.2; letter-spacing: -.025em; }
+	.member-info h3 span { font-weight: 500; }
+	.member-info p { margin: 6px 0 0; padding-right: 44px; color: var(--cobalt); font-size: 13.5px; font-weight: 600; line-height: 1.45; }
+	.member-info a { position: absolute; right: 18px; bottom: 20px; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--paper); color: var(--navy); transition: background .25s, transform .4s var(--ease); }
+	.member-info a:hover { background: var(--gold); transform: rotate(-8deg) scale(1.1); }
+
+	/* Valeurs : rangées géantes */
+	.values { position: relative; overflow: hidden; background: var(--navy); color: #fff; }
+	.values::before { content: ''; position: absolute; width: 760px; height: 760px; right: -280px; top: -320px; border-radius: 50%; background: radial-gradient(circle, rgba(59,75,255,.5), transparent 66%); pointer-events: none; }
+	.value-stack { position: relative; margin: 0 0 clamp(60px, 8vw, 110px); padding: 0; list-style: none; border-top: 3px solid var(--gold); }
+	.value-stack li { position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: center; gap: clamp(20px, 4vw, 56px); padding: clamp(22px, 3vw, 40px) 8px; border-bottom: 1px solid rgba(255,255,255,.2); transition: color .4s, padding .5s var(--ease); }
+	.value-stack li::before { content: ''; position: absolute; z-index: -1; inset: 0; background: var(--gold); transform: translateX(-101%); transition: transform .6s var(--ease); }
+	.value-stack li:hover { color: var(--navy); padding-left: 32px; }
+	.value-stack li:hover::before { transform: none; }
+	.value-stack .icon-frame { background: var(--gold); color: var(--navy); }
+	.value-stack li:hover .icon-frame { background: var(--navy); color: var(--gold); transform: rotate(-10deg); border-radius: 50%; }
+	.value-stack strong { font-family: var(--display); font-size: clamp(25px, 4.1vw, 62px); font-weight: 800; line-height: 1.05; letter-spacing: -.04em; }
+	.purpose { position: relative; margin: 0; }
+	.purpose figcaption { display: inline-block; margin-bottom: 26px; padding: 7px 16px; border-radius: 999px; background: rgba(255,212,59,.16); color: var(--gold-l); font-size: 14px; font-weight: 600; }
+	.purpose blockquote { max-width: 1100px; margin: 0; font-family: var(--display); font-size: clamp(18.5px, 2.3vw, 33px); font-weight: 800; line-height: 1.2; letter-spacing: -.025em; }
+
+	/* Environnement : onglets */
+	.env-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: clamp(30px, 4vw, 50px); }
+	.env-tab { display: inline-block; text-decoration: none; padding: 16px 28px; background: #fff; border: 2px solid var(--navy); border-radius: 999px; color: var(--navy); font: 700 14.5px/1 var(--sans); cursor: pointer; transition: background .3s, color .3s, transform .4s var(--ease); }
+	.env-tab:hover { transform: translateY(-3px); }
+	.env-tab.active { background: var(--navy); color: var(--gold); }
+	.env-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(28px, 5vw, 70px); align-items: center; }
+	.js .env-panel:not(.active) { display: none; }
+	.js .env-panel.active { animation: panel-in .9s var(--ease) both; }
+	@keyframes panel-in { from { opacity: 0; transform: translate3d(0, 40px, 0); } to { opacity: 1; transform: none; } }
+	.env-panel + .env-panel { margin-top: 70px; }
+	.js .env-panel + .env-panel { margin-top: 0; }
+	.env-visual { position: relative; display: grid; place-items: center; min-height: 420px; overflow: hidden; border-radius: var(--r-l); background: var(--navy); box-shadow: 14px 14px 0 var(--gold); }
+	.env-visual.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+	.env-visual.logo { padding: 48px; background: linear-gradient(150deg, var(--navy-d), var(--blue)); }
+	.env-visual.logo img { max-height: 240px; object-fit: contain; }
+	.env-copy h3 { margin: 0 0 18px; color: var(--navy); font-size: clamp(22px, 2.4vw, 32px); font-weight: 800; line-height: 1.1; letter-spacing: -.03em; }
+	.env-copy > p:not(.n7-eyebrow) { margin: 0 0 20px; color: var(--mut); font-size: 16px; line-height: 1.8; }
+	.env-list { display: grid; gap: 12px; margin: 0 0 28px; padding: 0; list-style: none; }
+	.env-list li { padding-left: 28px; position: relative; color: var(--ink); font-size: 15px; line-height: 1.6; }
+	.env-list li::before { content: ''; position: absolute; left: 0; top: .5em; width: 12px; height: 12px; border-radius: 50%; background: var(--cobalt); }
+	.env-list :global(strong) { color: var(--navy); }
+	.facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0; }
+	.facts div { display: flex; flex-direction: column; padding: 16px 14px; border-radius: 16px; background: #fff; border: 1px solid var(--line); }
+	.facts dd { margin: 0; color: var(--cobalt); font-family: var(--display); font-size: 25px; font-weight: 800; letter-spacing: -.04em; }
+	.facts dt { color: var(--mut); font-size: 12.5px; line-height: 1.4; }
+
+	/* Histoire : frise verticale, même langage que le reste du site */
+	.history { position: relative; overflow: hidden; }
+	.timeline { position: relative; max-width: 1040px; margin: 0 auto; padding: 0; list-style: none; }
+	.t-row { display: grid; grid-template-columns: clamp(96px, 15vw, 200px) 28px minmax(0, 1fr); column-gap: clamp(14px, 3vw, 36px); align-items: start; }
+	.t-year { padding-top: 14px; color: var(--navy); font-family: var(--display); font-size: clamp(32px, 4.6vw, 64px); font-weight: 800; line-height: 1; letter-spacing: -.05em; text-align: right; font-variant-numeric: tabular-nums; transition: color .6s ease, opacity .6s ease, translate .9s var(--ease); }
+	.t-node { position: relative; align-self: stretch; }
+	.t-node::before { content: ''; position: absolute; left: calc(50% - 1px); top: 0; bottom: 0; width: 2px; background: var(--line); }
+	.t-fill { position: absolute; left: calc(50% - 1.5px); top: 0; width: 3px; height: calc(var(--p, 0) * 100%); border-radius: 3px; background: linear-gradient(var(--cobalt), var(--gold)); }
+	.t-row:last-child .t-node::before { bottom: auto; height: 34px; }
+	.t-row:last-child .t-fill { max-height: 34px; }
+	.t-node::after { content: ''; position: absolute; z-index: 1; left: 50%; top: 30px; width: 18px; height: 18px; transform: translate(-50%, -50%); border-radius: 50%; background: var(--paper); border: 4px solid var(--paper); box-shadow: 0 0 0 2px var(--line); transition: background .4s ease, box-shadow .4s ease, transform .6s var(--ease); }
+	.t-row.on .t-node::after { background: var(--gold); box-shadow: 0 0 0 2px var(--navy); }
+	.t-row.current .t-node::after { transform: translate(-50%, -50%) scale(1.25); animation: t-pulse 2.2s ease-out infinite; }
+	@keyframes t-pulse { 0% { box-shadow: 0 0 0 2px var(--navy), 0 0 0 2px rgba(255,212,59,.7); } 100% { box-shadow: 0 0 0 2px var(--navy), 0 0 0 16px rgba(255,212,59,0); } }
+	.t-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; margin-bottom: 26px; padding: 26px 30px; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); box-shadow: 0 14px 34px -26px rgba(11,16,51,.35); transition: transform .5s var(--ease), box-shadow .5s var(--ease), border-color .3s, opacity .7s ease, translate .9s var(--ease); }
+	.t-card:hover { transform: translateY(-3px); border-color: var(--cobalt); box-shadow: 0 30px 56px -24px rgba(11,16,51,.4); }
+	.t-card.has-img { grid-template-columns: minmax(0, 1fr) clamp(150px, 20vw, 230px); align-items: center; }
+	/* Apparition au défilement (seulement si le JS tourne) */
+	.js .t-row:not(.on) .t-year { color: #b9bcd9; opacity: .55; translate: -18px 0; }
+	.js .t-row:not(.on) .t-card { opacity: 0; translate: 44px 0; }
+	.js .t-row .entry-img img { transform: scale(1.12); transition: transform 1.6s var(--ease); }
+	.js .t-row.on .entry-img img { transform: none; }
+	.t-card > ul { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; color: var(--ink); font-size: 15.5px; line-height: 1.55; }
+	.t-card > ul li { position: relative; padding-left: 26px; }
+	.t-card > ul li::before { content: ''; position: absolute; left: 0; top: .5em; width: 11px; height: 11px; border-radius: 50%; background: var(--cobalt); }
+	.entry-img { display: grid; place-items: center; height: 150px; overflow: hidden; border-radius: var(--r-s); background: var(--navy); }
+	.entry-img img { width: 100%; height: 100%; object-fit: cover; }
+	.entry-img.logo { padding: 18px; background: linear-gradient(150deg, var(--navy-d), var(--blue)); }
+	.entry-img.logo img { object-fit: contain; }
+
+	@media (max-width: 960px) {
+		.what, .env-panel { grid-template-columns: 1fr; gap: 36px; }
+		.reason-grid, .journey-grid { grid-template-columns: 1fr; }
+		.facts { grid-template-columns: 1fr 1fr; }
+	}
+	@media (max-width: 760px) {
+		.t-row { grid-template-columns: 22px minmax(0, 1fr); column-gap: 14px; }
+		.t-year { grid-column: 2; grid-row: 1; padding-top: 0; text-align: left; font-size: 34px; }
+		.t-node { grid-column: 1; grid-row: 1 / span 2; }
+		.t-node::after { top: 17px; }
+		.t-row:last-child .t-node::before { height: 21px; }
+		.t-card { grid-column: 2; grid-row: 2; padding: 22px 20px; }
+		.t-card.has-img { grid-template-columns: 1fr; }
+		.js .t-row:not(.on) .t-card { translate: 0 28px; }
+		.js .t-row:not(.on) .t-year { translate: 0 0; }
+	}
+	@media (max-width: 640px) {
+		.photo { height: 250px; }
+		.value-stack li:hover { padding-left: 8px; }
+		.env-visual { min-height: 300px; box-shadow: 8px 8px 0 var(--gold); }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.photo { transform: none; }
+		.t-row.current .t-node::after { animation: none; }
+	}
+</style>

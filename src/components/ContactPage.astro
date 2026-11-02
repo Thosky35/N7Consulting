@@ -1,0 +1,206 @@
+---
+import PageHero from './PageHero.astro';
+import Icon from './Icon.astro';
+import { site } from '../data/siteContent';
+import { teamImage } from '../data/home';
+import type { ContactPage as ContactPageData } from '../data/siteContent';
+
+interface Props {
+	page: ContactPageData;
+}
+const { page } = Astro.props;
+
+const next = [
+	['01', 'Premier échange', 'Un rendez-vous pour comprendre votre besoin en profondeur.'],
+	['02', 'Proposition & devis', 'Une proposition détaillée et un devis, sans engagement.'],
+	['03', 'Lancement de l’étude', 'Des intervenants sélectionnés et un chargé d’affaires dédié à vos côtés.'],
+];
+---
+
+<PageHero
+	image={teamImage}
+	crumbs={[{ label: 'Accueil', href: '/' }, { label: 'Contact' }]}
+	eyebrow={page.eyebrow}
+	lead={page.headingLead}
+	em={page.headingEm}
+	text={page.lead}
+/>
+
+<section class="contact-wrap">
+	<form
+		class="form"
+		id="contact-form"
+		novalidate
+		data-endpoint={page.formEndpoint || undefined}
+		data-email={site.email}
+	>
+		<fieldset>
+			<legend>Votre projet concerne</legend>
+			<div class="chips">
+				{page.services.map((s, i) => (
+					<label class="chip"><input type="radio" name="service" value={s} checked={i === 0} /><span>{s}</span></label>
+				))}
+			</div>
+		</fieldset>
+
+		<div class="row">
+			<label class="field"><span>Prénom *</span><input type="text" name="prenom" autocomplete="given-name" required /></label>
+			<label class="field"><span>Nom *</span><input type="text" name="nom" autocomplete="family-name" required /></label>
+		</div>
+		<div class="row">
+			<label class="field"><span>E-mail *</span><input type="email" name="email" autocomplete="email" required /></label>
+			<label class="field"><span>Téléphone</span><input type="tel" name="telephone" autocomplete="tel" /></label>
+		</div>
+		<label class="field"><span>Entreprise ou organisation</span><input type="text" name="entreprise" autocomplete="organization" /></label>
+		<label class="field"><span>Informations sur votre projet *</span><textarea name="informations" rows="6" placeholder="Objectif, contexte, livrables attendus, délais…" required></textarea></label>
+
+		<fieldset>
+			<legend>Comment nous avez-vous connus ?</legend>
+			<div class="chips">
+				{page.sources.map((s) => (
+					<label class="chip"><input type="radio" name="source" value={s} /><span>{s}</span></label>
+				))}
+			</div>
+		</fieldset>
+
+		<label class="consent">
+			<input type="checkbox" name="consent" required />
+			<span>J’accepte que mes données soient utilisées pour traiter ma demande, conformément à la <a href="/mentions-legales">politique de confidentialité</a>. *</span>
+		</label>
+
+		<button class="n7-btn n7-btn-gold submit" type="submit">Envoyer ma demande <span aria-hidden="true">↗</span></button>
+
+		<p class="msg ok" id="msg-ok" role="status" hidden></p>
+		<p class="msg ko" id="msg-ko" role="alert" hidden>Un problème est survenu lors de l’envoi. Merci de réessayer, ou d’écrire directement à {site.email}.</p>
+	</form>
+
+	<aside class="side">
+		<div class="side-photo"><img src={teamImage} alt="L’équipe N7Consulting" loading="lazy" /></div>
+		<div class="card">
+			<h2>Nos coordonnées</h2>
+			<ul class="infos">
+				<li><span class="ico"><Icon name="mail" size={22} /></span><a href={`mailto:${site.email}`}>{site.email}</a></li>
+				<li><span class="ico"><Icon name="pin" size={22} /></span><a href={site.mapUrl} target="_blank" rel="noreferrer">{site.address}</a></li>
+			</ul>
+			<div class="side-links">
+				<a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+				<a href={site.instagram} target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span></a>
+				<a href={site.brochure} target="_blank" rel="noreferrer">Brochure <span aria-hidden="true">↓</span></a>
+			</div>
+		</div>
+		<div class="card steps">
+			<h2>Et ensuite ?</h2>
+			<ol>
+				{next.map(([n, t, d]) => (
+					<li><span class="n">{n}</span><div><strong>{t}</strong><p>{d}</p></div></li>
+				))}
+			</ol>
+		</div>
+	</aside>
+</section>
+
+<script>
+	const form = document.getElementById('contact-form') as HTMLFormElement | null;
+	const ok = document.getElementById('msg-ok');
+	const ko = document.getElementById('msg-ko');
+
+	form?.addEventListener('submit', async (event) => {
+		event.preventDefault();
+		if (!ok || !ko) return;
+		ok.hidden = true;
+		ko.hidden = true;
+		if (!form.reportValidity()) return;
+
+		const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+		const endpoint = form.dataset.endpoint;
+		try {
+			if (endpoint) {
+				const res = await fetch(endpoint, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+					body: JSON.stringify(data),
+				});
+				if (!res.ok) throw new Error('send');
+				ok.textContent = 'Merci ! Votre demande a bien été envoyée, nous revenons vers vous dans les plus brefs délais.';
+			} else {
+				const subject = `Demande de devis – ${data.service ?? 'N7Consulting'}`;
+				const body = [
+					`Service : ${data.service ?? ''}`,
+					`Nom : ${data.prenom} ${data.nom}`,
+					`E-mail : ${data.email}`,
+					`Téléphone : ${data.telephone || '—'}`,
+					`Organisation : ${data.entreprise || '—'}`,
+					`Connu via : ${data.source || '—'}`,
+					'',
+					data.informations,
+				].join('\n');
+				window.location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+				ok.textContent = 'Votre messagerie s’ouvre avec votre demande pré-remplie : il ne reste qu’à l’envoyer.';
+			}
+			ok.hidden = false;
+			form.reset();
+		} catch {
+			ko.hidden = false;
+		}
+	});
+</script>
+
+<style>
+	.contact-wrap { display: grid; grid-template-columns: 1.6fr 1fr; gap: 40px; align-items: start; padding: clamp(60px, 7vw, 100px) var(--gut) clamp(80px, 9vw, 120px); background: var(--paper); }
+	.form { display: grid; gap: 28px; padding: clamp(28px, 4vw, 52px); background: #fff; border-radius: var(--r-l); box-shadow: 0 40px 80px -36px rgba(6,10,34,.3); }
+	fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+	legend { margin-bottom: 14px; padding: 0; color: var(--navy); font-family: var(--display); font-size: 19px; font-weight: 700; letter-spacing: -.015em; }
+	.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+	.chip { position: relative; }
+	.chip input { position: absolute; opacity: 0; pointer-events: none; }
+	.chip span { display: inline-block; padding: 12px 22px; border: 1.5px solid var(--line); border-radius: 999px; color: var(--ink); font-size: 13.5px; font-weight: 500; cursor: pointer; transition: border-color .2s, background .3s, color .3s, transform .4s var(--ease); }
+	.chip:hover span { border-color: var(--gold); transform: none; }
+	.chip input:checked + span { background: var(--navy); border-color: var(--navy); color: #fff; transform: none; box-shadow: inset 0 0 0 2px rgba(255,212,59,.0), 0 10px 20px -10px rgba(11,16,51,.6); }
+	.chip input:focus-visible + span { outline: 3px solid var(--gold); outline-offset: 3px; }
+	.row { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+	.field { display: grid; gap: 8px; }
+	.field span { color: var(--navy); font-size: 14px; font-weight: 600; }
+	.field input, .field textarea { width: 100%; padding: 16px 18px; background: var(--paper); border: 1.5px solid transparent; border-radius: 14px; color: var(--ink); font: 400 15px/1.5 var(--sans); transition: border-color .25s, background .25s, box-shadow .25s; }
+	.field textarea { resize: vertical; min-height: 150px; }
+	.field input:hover, .field textarea:hover { border-color: var(--line); }
+	.field input:focus, .field textarea:focus { outline: 0; background: #fff; border-color: var(--gold); box-shadow: 0 0 0 5px rgba(255,212,59,.2); }
+	.consent { display: grid; grid-template-columns: 22px 1fr; gap: 14px; color: var(--mut); font-size: 14px; line-height: 1.6; }
+	.consent input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--navy); }
+	.consent a { color: var(--navy); }
+	.submit { justify-self: start; min-height: 64px; padding: 0 10px 0 34px; font-size: 15px; }
+	.submit > span { width: 44px; height: 44px; }
+	.msg { margin: 0; padding: 16px 20px; font-size: 14px; line-height: 1.6; border-radius: 14px; border-left: 4px solid; }
+	.msg.ok { background: #eef7ee; border-color: #3b8a4a; color: #1f5a2b; }
+	.msg.ko { background: #fbeeee; border-color: #b03a3a; color: #7a2020; }
+
+	.side-photo { overflow: hidden; border-radius: var(--r-m); aspect-ratio: 16 / 10; background: var(--navy); }
+	.side-photo img { width: 100%; height: 100%; object-fit: cover; }
+	.side { display: grid; gap: 22px; align-self: start; }
+	.card { padding: 38px 34px; background: var(--navy); color: #fff; border-radius: var(--r-l); }
+	.card h2 { margin: 0 0 24px; font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+	.infos { display: grid; gap: 18px; margin: 0 0 26px; padding: 0; list-style: none; }
+	.infos li { display: flex; align-items: flex-start; gap: 14px; font-size: 14.5px; line-height: 1.5; }
+	.infos a { color: #e3e6fb; text-decoration: none; transition: color .2s; }
+	.infos a:hover { color: var(--gold); }
+	.ico { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: rgba(255,212,59,.16); color: var(--gold); margin-top: -4px; }
+	.side-links { display: flex; flex-wrap: wrap; gap: 10px 22px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.14); }
+	.side-links a { color: var(--gold-l); font-size: 13.5px; font-weight: 600; text-decoration: none; transition: color .2s; }
+	.side-links a:hover { color: #fff; }
+	.steps { background: #fff; color: var(--ink); }
+	.steps h2 { color: var(--navy); }
+	.steps ol { position: relative; display: grid; gap: 24px; margin: 0; padding: 0; list-style: none; }
+	.steps ol::before { content: ''; position: absolute; left: 19px; top: 18px; bottom: 18px; width: 2px; background: var(--line); }
+	.steps li { position: relative; display: grid; grid-template-columns: 40px 1fr; gap: 16px; }
+	.steps .n { position: relative; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--gold); color: var(--navy); font-family: var(--display); font-size: 14.5px; font-weight: 800; }
+	.steps strong { color: var(--navy); font-family: var(--display); font-size: 17px; letter-spacing: -.01em; }
+	.steps p { margin: 4px 0 0; color: var(--mut); font-size: 13.5px; line-height: 1.6; }
+
+	@media (max-width: 960px) {
+		.contact-wrap { grid-template-columns: 1fr; }
+		.side { position: static; }
+	}
+	@media (max-width: 600px) {
+		.row { grid-template-columns: 1fr; }
+		.submit { justify-self: stretch; justify-content: space-between; }
+	}
+</style>
