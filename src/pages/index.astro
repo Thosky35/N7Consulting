@@ -1,11 +1,249 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { expertise, clients, teamImage } from '../data/home';
+import { method } from '../data/siteContent';
+import CompanyLogo from '../components/CompanyLogo.astro';
+import Deco from '../components/Deco.astro';
+import LinkCard from '../components/LinkCard.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const expertiseTone = ['cobalt', 'sun', 'night'];
+const CDN = 'https://cdn.prod.website-files.com/67a9fca34d150f14e73d9ba7/';
+const expertiseImg = [method[1].image, method[0].image, CDN + '67db33a0013b1f261a648bdb_groupes_je-4-min.jpg'];
+const doorImg = [CDN + '67b47c8f28387bca819ef6c0_N7C_CRPSO2024_5_11zon-p-500.avif', method[2].image, CDN + '67bdba0d63dbef114fbc6f39_flag_photo.webp', teamImage];
+
 ---
 
 <Layout>
-	<Welcome />
+	<SiteHeader />
+
+	<main>
+		<!-- ============ HERO : même langage que les en-têtes des pages intérieures ============ -->
+		<section class="hero" id="accueil" aria-labelledby="hero-title">
+			<span class="orb o1" aria-hidden="true"></span>
+			<span class="orb o2" aria-hidden="true"></span>
+			<span class="grid-bg" aria-hidden="true"></span>
+			<Deco kind="gear" style="right:-80px;bottom:-110px;width:340px;color:#fff;opacity:.09" />
+			<Deco kind="constellation" style="top:26px;right:44%;width:250px;color:#ffe680;opacity:.5" />
+			<Deco kind="sine" style="left:var(--gut);bottom:26px;width:190px;color:#ffe680;opacity:.3" />
+
+			<div class="hero-inner">
+				<div class="hero-copy-col">
+					<p class="n7-eyebrow rise" style="--i:1">Junior-Entreprise de l’ENSEEIHT, à Toulouse</p>
+					<h1 id="hero-title" class="hl-title on-dark loaded rise" style="--i:2">L’ingénierie qui <em>fait avancer</em> vos projets.</h1>
+					<p class="hero-copy rise" style="--i:3">
+						Le regard neuf d’étudiants ingénieurs, la rigueur d’une équipe engagée et des solutions pensées pour vos enjeux.
+					</p>
+					<div class="hero-actions rise" style="--i:4">
+						<a class="n7-btn n7-btn-gold" href="/contact">Confiez-nous votre projet <span aria-hidden="true">↗</span></a>
+						<a class="n7-link n7-link-light" href="#expertises">Voir nos expertises <span aria-hidden="true">↓</span></a>
+					</div>
+				</div>
+
+				<div class="hero-visual">
+					<div class="photo-block">
+						<img src={teamImage} alt="Les étudiants ingénieurs de N7Consulting réunis autour d’un projet" fetchpriority="high" />
+					</div>
+					<div class="float-card rise" style="--i:6">
+						<strong>Top 3</strong>
+						<span>des Junior-Entreprises de France en 2022</span>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============ Bandeau clients ============ -->
+		<section class="clients" id="clients" aria-label="Ils nous font confiance">
+			<div class="n7-marquee">
+				{[0, 1].map((n) => (
+					<div class="n7-marquee-track" aria-hidden={n === 1 ? 'true' : undefined}>
+						{clients.map((c) => (
+							<span class="client"><CompanyLogo name={c} size={34} strict />{c}<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 1.500l2.600 8 8 2.500-8 2.500L12 22.500l-2.600-8-8-2.500 8-2.500Z" fill="currentColor" /></svg></span>
+						))}
+					</div>
+				))}
+			</div>
+		</section>
+
+		<!-- ============ Manifeste : l’engagement, mot par mot ============ -->
+		<section class="manifesto" id="engagement" aria-labelledby="engagement-title">
+			<Deco kind="frame" style="right:var(--gut);top:46px;width:120px;color:#1b2590;opacity:.22" />
+			<Deco kind="dims" label="49 ANS D’EXPERTISE" style="right:var(--gut);bottom:34px;width:260px;color:#1b2590;opacity:.4" />
+			<p class="n7-eyebrow on-light" data-reveal="up">Notre engagement</p>
+			<h2 id="engagement-title" class="n7-h2 hl-title" data-reveal="up">Des étudiants ingénieurs. <em>Une exigence professionnelle.</em></h2>
+			<p class="manifesto-text">N7Consulting est la Junior-Entreprise de l’ENSEEIHT, grande école d’ingénieurs au cœur de Toulouse. Nos équipes mettent leurs compétences scientifiques et leur énergie au service des entreprises, avec un accompagnement attentif à chaque étape.</p>
+			<div data-reveal="up"><a class="n7-btn n7-btn-navy" href="/qui-sommes-nous">Découvrir N7Consulting <span aria-hidden="true">→</span></a></div>
+		</section>
+
+		<!-- ============ Chiffres ============ -->
+		<section class="stats" aria-labelledby="stats-title">
+			<Deco kind="constellation" style="right:4%;top:36px;width:300px;color:#ffe680;opacity:.5" />
+			<Deco kind="gear" style="right:-60px;bottom:-90px;width:300px;color:#fff;opacity:.07" />
+			<h2 id="stats-title" class="n7-h2 on-dark hl-title on-dark" data-reveal="up">Près de <em>50 ans</em> d’expérience, mis à votre service.</h2>
+			<dl class="stat-row" data-stagger="110">
+				<div class="stat"><dt>des JE de France en 2022</dt><dd><span class="pre">Top&nbsp;</span><span data-counter="3">3</span></dd></div>
+				<div class="stat"><dt>projets réalisés</dt><dd><span data-counter="600">600</span><span class="post">+</span></dd></div>
+				<div class="stat"><dt>de satisfaction client</dt><dd><span data-counter="97">97</span><span class="post">%</span></dd></div>
+				<div class="stat"><dt>ans d’expérience</dt><dd><span data-counter="49">49</span></dd></div>
+			</dl>
+		</section>
+
+		<!-- ============ Expertises : trois panneaux qui s’empilent ============ -->
+		<section class="expertise-section" id="expertises" aria-labelledby="expertise-title">
+			<Deco kind="circuit" style="right:var(--gut);top:30px;width:300px;color:#1b2590;opacity:.22" />
+			<div class="section-heading">
+				<div data-reveal="up">
+					<p class="n7-eyebrow on-light">Ce que nous faisons</p>
+					<h2 id="expertise-title" class="n7-h2 hl-title">Vos enjeux sont uniques. <em>Nos expertises se rencontrent.</em></h2>
+				</div>
+				<p class="section-aside" data-reveal="up" data-delay="150">Du premier échange à la livraison, nous mobilisons les bonnes compétences pour construire une réponse adaptée à votre besoin.</p>
+			</div>
+			<div class="expertise-grid" data-stagger="120">
+				{expertise.map((item, i) => (
+					<LinkCard
+						href={item.icon === 'digital' ? '/digital-data' : item.icon === 'engineering' ? '/ingenierie-it' : '/eco-ingenierie'}
+						num={item.number}
+						title={item.title}
+						text={item.copy}
+						tags={item.tags}
+						image={expertiseImg[i]}
+						label={`Découvrir le pôle ${item.title}`}
+					/>
+				))}
+			</div>
+		</section>
+
+		<!-- ============ Portes d’entrée vers les pages ============ -->
+		<section class="doors" aria-labelledby="doors-title">
+			<div class="section-heading" data-reveal="up">
+				<div>
+					<p class="n7-eyebrow on-light">Aller plus loin</p>
+					<h2 id="doors-title" class="n7-h2 hl-title">Découvrez <em>N7Consulting.</em></h2>
+				</div>
+			</div>
+			<div class="doors-grid" data-stagger="120">
+				<LinkCard href="/realisations" kicker="Des projets concrets" title="La confiance se construit dans les résultats." num="01" image={doorImg[0]} />
+				<LinkCard href="/methode" kicker="Comment ça se passe" title="Notre méthode en action" num="02" image={doorImg[1]} />
+				<LinkCard href="/qui-sommes-nous" kicker="Depuis 1977" title="Qui sommes-nous ?" num="03" image={doorImg[2]} />
+				<LinkCard href="/actualites" kicker="Journal de la Junior" title="Dernières actualités" num="04" image={doorImg[3]} />
+			</div>
+		</section>
+
+		<!-- ============ Contact ============ -->
+		<section class="contact-section" id="contact" aria-labelledby="contact-title">
+			<p class="contact-kicker">Un projet en tête ? Nous sommes à votre écoute.</p>
+			<div class="contact-main">
+				<h2 id="contact-title">Faisons-le avancer.</h2>
+				<a class="n7-btn n7-btn-navy" href="/contact" aria-label="Contacter N7Consulting">Parlons de votre projet <span aria-hidden="true">↗</span></a>
+			</div>
+			<div class="contact-bottom"><span>N7Consulting, Junior-Entreprise de l’ENSEEIHT</span><span>Toulouse, France</span></div>
+		</section>
+	</main>
+
+	<SiteFooter />
 </Layout>
+
+<style>
+	/* ---------- HERO (aligné sur PageHero) ---------- */
+	.hero { position: relative; overflow: hidden; padding: clamp(64px, 7vw, 104px) var(--gut) clamp(100px, 10vw, 140px); background: linear-gradient(130deg, var(--navy-d) 0%, #1b2590 62%, #3b4bff 130%); color: #fff; }
+	.hero::after { content: ''; position: absolute; inset: auto 0 0; height: 8px; background: var(--gold); }
+	.orb { position: absolute; border-radius: 50%; pointer-events: none; filter: blur(2px); }
+	.o1 { width: 620px; height: 620px; right: -180px; top: -260px; background: radial-gradient(circle at 35% 35%, rgba(59,75,255,.55), rgba(59,75,255,0) 66%); animation: drift 14s ease-in-out infinite alternate; }
+	.o2 { width: 360px; height: 360px; right: 12%; bottom: -200px; background: radial-gradient(circle, rgba(255,212,59,.3), rgba(255,212,59,0) 68%); animation: drift 11s ease-in-out infinite alternate-reverse; }
+	@keyframes drift { to { transform: translate3d(-40px, 30px, 0) scale(1.08); } }
+	.grid-bg { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(255,230,128,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,230,128,.06) 1px, transparent 1px); background-size: 64px 64px; mask-image: linear-gradient(100deg, transparent 20%, #000 95%); -webkit-mask-image: linear-gradient(100deg, transparent 20%, #000 95%); }
+	.hero-inner { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); align-items: center; gap: clamp(36px, 5vw, 80px); }
+	.rise { animation: rise .6s ease-out both; animation-delay: calc(var(--i, 0) * 60ms + 60ms); }
+	@keyframes rise { from { opacity: 0; transform: translate3d(0, 10px, 0); } to { opacity: 1; transform: none; } }
+	h1 { margin: 0; font-size: clamp(36px, 5.4vw, 80px); font-weight: 800; line-height: .98; letter-spacing: -.05em; text-wrap: balance; }
+	.hero-copy { max-width: 560px; margin: 28px 0 0; color: #d3d7f5; font-size: 17px; line-height: 1.7; }
+	.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 28px 34px; margin-top: 40px; }
+
+	.hero-visual { position: relative; width: 100%; aspect-ratio: 4 / 5; }
+	.photo-block { position: absolute; inset: 0; overflow: hidden; background: var(--navy); border-radius: 40% 40% var(--r-m) var(--r-m) / 28% 28% var(--r-m) var(--r-m); box-shadow: 10px 10px 0 var(--gold), 0 40px 80px -30px rgba(6,10,34,.7); }
+	.photo-block img { width: 100%; height: 100%; object-fit: cover; object-position: 40% center; }
+	.float-card { position: absolute; z-index: 2; left: -12%; bottom: 8%; display: flex; flex-direction: column; max-width: 210px; padding: 16px 20px; background: #fff; color: var(--navy); border-radius: var(--r-m); box-shadow: 0 30px 50px -14px rgba(6,10,34,.55); }
+	.float-card strong { font-family: var(--display); font-size: 32px; font-weight: 800; line-height: 1; letter-spacing: -.04em; color: var(--cobalt); }
+	.float-card span { margin-top: 6px; color: var(--mut); font-size: 13.5px; line-height: 1.4; }
+
+	/* ---------- Clients ---------- */
+	.clients { background: var(--gold); color: var(--navy); }
+	.client { display: inline-flex; align-items: center; gap: 36px; padding: 22px 0 22px 36px; font-family: var(--display); font-size: clamp(18.5px, 2.2vw, 28.5px); font-weight: 800; letter-spacing: -.03em; white-space: nowrap; }
+	.client svg { color: var(--cobalt); }
+
+	/* ---------- Manifeste ---------- */
+	.manifesto { position: relative; overflow: hidden; padding: clamp(90px, 11vw, 170px) var(--gut) clamp(70px, 8vw, 120px); background: #fff; }
+	.manifesto .n7-h2 { max-width: 1000px; margin-bottom: clamp(40px, 5vw, 70px); }
+	.manifesto-text + div { margin-top: clamp(36px, 4vw, 56px); }
+	.manifesto-text { max-width: 1180px; margin: 0; color: var(--navy); font-family: var(--display); font-size: clamp(18.5px, 2.1vw, 31px); font-weight: 800; line-height: 1.2; letter-spacing: -.025em; }
+
+	/* ---------- Chiffres ---------- */
+	.stats { position: relative; overflow: hidden; padding: clamp(80px, 9vw, 130px) var(--gut); background: var(--navy); color: #fff; }
+	.stats::before { content: ''; position: absolute; width: 900px; height: 900px; left: 50%; top: 40%; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgba(59,75,255,.5), rgba(59,75,255,0) 62%); pointer-events: none; }
+	.stats .n7-h2 { position: relative; max-width: 900px; }
+	.stat-row { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: clamp(50px, 6vw, 90px) 0 0; }
+	.stat { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 10px; padding: 26px 24px 8px 0; border-top: 3px solid var(--gold); }
+	.stat + .stat { padding-left: 24px; }
+	.stat dd { margin: 0; color: var(--gold); font-family: var(--display); font-size: clamp(32.5px, 3.8vw, 56px); font-weight: 800; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+	.stat dd .pre { font-size: .5em; letter-spacing: -.03em; color: #fff; }
+	.stat dd .post { color: #fff; }
+	.stat dt { color: #d3d7f5; font-size: 15.5px; line-height: 1.4; }
+
+	/* ---------- Titres de section ---------- */
+	.section-heading { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; margin-bottom: clamp(44px, 5vw, 70px); }
+	.section-aside { max-width: 360px; margin: 0 0 8px; color: var(--mut); font-size: 15.5px; line-height: 1.75; }
+
+	/* ---------- Expertises : panneaux empilés ---------- */
+	.expertise-section { position: relative; overflow: hidden; padding: clamp(80px, 9vw, 130px) var(--gut) clamp(48px, 5vw, 72px); background: var(--paper); }
+	.expertise-grid { display: grid; gap: 16px; }
+
+	/* ---------- Engagement ---------- */
+
+	/* ---------- Projets ---------- */
+
+	/* ---------- Témoignages ---------- */
+
+
+	/* ---------- Portes d’entrée ---------- */
+	.doors { position: relative; overflow: hidden; padding: 0 var(--gut) clamp(80px, 9vw, 130px); background: var(--paper); }
+	.doors-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+	.doors-grid { position: relative; }
+	@media (max-width: 800px) {
+		.doors-grid { grid-template-columns: 1fr; grid-template-rows: none; }
+	}
+
+	/* ---------- Contact ---------- */
+	.contact-section { position: relative; overflow: hidden; padding: 32px var(--gut) 18px; background: var(--gold); color: var(--navy); }
+	.contact-kicker { position: relative; margin: 0; font-size: 14px; font-weight: 700; }
+	.contact-main { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 8px 0 22px; }
+	.contact-main h2 { margin: 0; font-size: clamp(26px, 3.2vw, 40px); font-weight: 800; line-height: 1.05; letter-spacing: -.03em; }
+	.contact-main .n7-btn { min-height: 48px; padding: 0 6px 0 22px; font-size: 14px; flex-shrink: 0; }
+	.contact-main .n7-btn > span { width: 36px; height: 36px; }
+	.contact-bottom { position: relative; display: flex; justify-content: space-between; gap: 20px; padding-top: 12px; border-top: 1.5px solid rgba(11,16,51,.25); font-size: 12.5px; font-weight: 600; }
+
+	/* ---------- Responsive ---------- */
+	@media (max-width: 1000px) {
+		.hero-inner { grid-template-columns: 1fr; }
+		.hero-visual { width: min(80%, 340px); justify-self: center; margin-top: 24px; }
+		.float-card { left: -6%; }
+		.stat-row { grid-template-columns: 1fr 1fr; row-gap: 30px; }
+		.stat:nth-child(3) { padding-left: 0; }
+	}
+	@media (max-width: 650px) {
+		.hero { padding: 40px var(--gut) 72px; }
+		.hero-copy { font-size: 15.5px; }
+		.float-card { padding: 14px 16px; max-width: 180px; }
+		.float-card strong { font-size: 28.5px; }
+		.section-heading { flex-direction: column; align-items: flex-start; gap: 22px; }
+		.stat dd { font-size: clamp(35.5px, 11.1vw, 53.5px); }
+		.stat { padding-right: 10px; }
+		.stat + .stat { padding-left: 14px; }
+		.contact-main { flex-direction: column; align-items: flex-start; padding: 12px 0 22px; }
+		.contact-bottom { flex-direction: column; gap: 4px; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.o1, .o2 { animation: none; }
+		.rise { animation: none; }
+	}
+</style>
